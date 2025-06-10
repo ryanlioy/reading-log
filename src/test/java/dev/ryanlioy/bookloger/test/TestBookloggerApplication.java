@@ -1,5 +1,6 @@
-package dev.ryanlioy.bookloger;
+package dev.ryanlioy.bookloger.test;
 
+import dev.ryanlioy.bookloger.BookloggerApplication;
 import org.springframework.boot.SpringApplication;
 
 public class TestBookloggerApplication {
