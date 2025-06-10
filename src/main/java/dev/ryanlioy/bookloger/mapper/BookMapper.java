@@ -16,6 +16,7 @@ public class BookMapper {
         bookEntity.setAuthor(bookResource.getAuthor());
         bookEntity.setPublishDate(bookResource.getPublishDate());
         bookEntity.setGenres(bookResource.getGenres());
+        bookEntity.setPublisher(bookResource.getPublisher());
 
         return bookEntity;
     }
@@ -28,6 +29,8 @@ public class BookMapper {
         bookResource.setTitle(bookEntity.getTitle());
         bookResource.setAuthor(bookEntity.getAuthor());
         bookResource.setPublishDate(bookEntity.getPublishDate());
+        bookResource.setGenres(bookEntity.getGenres());
+        bookResource.setPublisher(bookEntity.getPublisher());
 
         bookResource.setGenres(bookEntity.getGenres());
         return bookResource;
