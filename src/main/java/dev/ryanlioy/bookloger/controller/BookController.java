@@ -2,14 +2,13 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
-import dev.ryanlioy.bookloger.repository.BookRepository;
 import dev.ryanlioy.bookloger.resource.BookResource;
+import dev.ryanlioy.bookloger.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +16,11 @@ import java.util.Optional;
 @RequestMapping("/book")
 public class BookController {
     private BookMapper bookMapper;
-    private BookRepository bookRepository;
+    private BookService bookService;
 
-    public BookController(BookMapper bookMapper, BookRepository bookRepository) {
+    public BookController(BookMapper bookMapper, BookService bookService) {
         this.bookMapper = bookMapper;
-        this.bookRepository = bookRepository;
+        this.bookService = bookService;
     }
 
     /**
@@ -31,10 +30,7 @@ public class BookController {
      */
     @PostMapping("/add")
     public ResponseEntity<BookResource> addBook(@RequestBody BookResource bookResource) {
-        BookEntity bookEntity = bookMapper.resourceToEntity(bookResource);
-        BookEntity savedEntity = bookRepository.save(bookEntity);
-
-        return new ResponseEntity<>(bookMapper.entityToResource(savedEntity), HttpStatus.CREATED);
+        return new ResponseEntity<>(bookService.createBook(bookResource), HttpStatus.CREATED);
     }
 
     /**
@@ -44,7 +40,7 @@ public class BookController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<BookResource> getBook(@PathVariable Long id) {
-        Optional<BookEntity> optional = bookRepository.findById(id);
+        Optional<BookEntity> optional = bookService.getBookById(id);
         BookResource bookResource = null;
         HttpStatus status = HttpStatus.NO_CONTENT;
         if (optional.isPresent()) {
@@ -61,14 +57,7 @@ public class BookController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<BookResource>> getAllBooks() {
-        Iterable<BookEntity> entities = bookRepository.findAll();
-        List<BookResource> bookResources = new ArrayList<>();
-
-        for (BookEntity entity : entities) {
-            bookResources.add(bookMapper.entityToResource(entity));
-        }
-
-        return new ResponseEntity<>(bookResources, HttpStatus.OK);
+        return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
     /**
@@ -78,7 +67,7 @@ public class BookController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<BookResource> deleteBook(@PathVariable Long id) {
-        bookRepository.deleteById(id);
+        bookService.deleteBookById(id);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 }
