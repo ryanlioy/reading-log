@@ -10,15 +10,15 @@ import java.util.Optional;
 
 @Component
 public class UserService {
-    public UserRepository userRepository;
-    public UserMapper userMapper;
+    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
 
-    public Optional<UserEntity> getUser(Long id) {
+    public Optional<UserEntity> getUserById(Long id) {
         return userRepository.findById(id);
     }
 

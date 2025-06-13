@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResource> getUser(@PathVariable Long id) {
-        Optional<UserEntity> optional = userService.getUser(id);
+        Optional<UserEntity> optional = userService.getUserById(id);
         UserResource userResource = null;
         HttpStatus status = HttpStatus.NO_CONTENT;
         if (optional.isPresent()) {
