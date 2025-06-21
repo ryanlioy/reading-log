@@ -1,6 +1,6 @@
 package dev.ryanlioy.bookloger.controller;
 
-import dev.ryanlioy.bookloger.resource.CurrentlyReadingResource;
+import dev.ryanlioy.bookloger.dto.CurrentlyReadingDto;
 import dev.ryanlioy.bookloger.service.CurrentlyReadingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +19,9 @@ public class CurrentlyReadingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CurrentlyReadingResource> getCurrentlyReading(@PathVariable Long id) {
-        CurrentlyReadingResource resource = currentlyReadingService.findById(id);
-        ResponseEntity<CurrentlyReadingResource> response;
+    public ResponseEntity<CurrentlyReadingDto> getCurrentlyReading(@PathVariable Long id) {
+        CurrentlyReadingDto resource = currentlyReadingService.findById(id);
+        ResponseEntity<CurrentlyReadingDto> response;
         if(resource == null) {
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -32,17 +32,17 @@ public class CurrentlyReadingController {
     }
 
     @PostMapping
-    public ResponseEntity<CurrentlyReadingResource> create(@RequestBody CurrentlyReadingResource resource) {
+    public ResponseEntity<CurrentlyReadingDto> create(@RequestBody CurrentlyReadingDto resource) {
         return new ResponseEntity<>(currentlyReadingService.create(resource),  HttpStatus.CREATED) ;
     }
 
     @GetMapping
-    public ResponseEntity<List<CurrentlyReadingResource>> getAllCurrentlyReadings() {
+    public ResponseEntity<List<CurrentlyReadingDto>> getAllCurrentlyReadings() {
         return new ResponseEntity<>(currentlyReadingService.findAll(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CurrentlyReadingResource> deleteById(@PathVariable Long id){
+    public ResponseEntity<CurrentlyReadingDto> deleteById(@PathVariable Long id){
         currentlyReadingService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

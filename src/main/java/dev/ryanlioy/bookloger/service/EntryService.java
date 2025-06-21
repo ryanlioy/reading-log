@@ -3,7 +3,7 @@ package dev.ryanlioy.bookloger.service;
 import dev.ryanlioy.bookloger.entity.EntryEntity;
 import dev.ryanlioy.bookloger.mapper.EntryMapper;
 import dev.ryanlioy.bookloger.repository.EntryRepository;
-import dev.ryanlioy.bookloger.resource.EntryResource;
+import dev.ryanlioy.bookloger.dto.EntryDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,14 +20,14 @@ public class EntryService {
         this.entryMapper = entryMapper;
     }
 
-    public EntryResource createEntry(EntryResource entryResource) {
-        return entryMapper.entityToResource(entryRepository.save(entryMapper.resourceToEntity(entryResource)));
+    public EntryDto createEntry(EntryDto entryDto) {
+        return entryMapper.entityToResource(entryRepository.save(entryMapper.resourceToEntity(entryDto)));
     }
 
-    public List<EntryResource> getEntryByBookIdAndUserId(Long bookId, Long userId) {
+    public List<EntryDto> getEntryByBookIdAndUserId(Long bookId, Long userId) {
         List<EntryEntity> entities = entryRepository.findAllByUserIdAndBookId(bookId, userId);
 
-        List<EntryResource> resources = new ArrayList<>();
+        List<EntryDto> resources = new ArrayList<>();
         for(EntryEntity entity : entities) {
             resources.add(entryMapper.entityToResource(entity));
         }

@@ -3,7 +3,7 @@ package dev.ryanlioy.bookloger.service;
 import dev.ryanlioy.bookloger.entity.CurrentlyReadingEntity;
 import dev.ryanlioy.bookloger.mapper.CurrentlyReadingMapper;
 import dev.ryanlioy.bookloger.repository.CurrentlyReadingRepository;
-import dev.ryanlioy.bookloger.resource.CurrentlyReadingResource;
+import dev.ryanlioy.bookloger.dto.CurrentlyReadingDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class CurrentlyReadingService {
         this.currentlyReadingMapper = currentlyReadingMapper;
     }
 
-    public CurrentlyReadingResource findById(Long id) {
+    public CurrentlyReadingDto findById(Long id) {
         CurrentlyReadingEntity entity = currentlyReadingRepository.findById(id).orElse(null);
         if (entity == null) {
             return null;
@@ -27,16 +27,16 @@ public class CurrentlyReadingService {
         return currentlyReadingMapper.entityToResource(entity);
     }
 
-    public CurrentlyReadingResource create(CurrentlyReadingResource resource) {
+    public CurrentlyReadingDto create(CurrentlyReadingDto resource) {
         return currentlyReadingMapper.entityToResource(currentlyReadingRepository.save(currentlyReadingMapper.resourceToEntity(resource)));
     }
 
-    public List<CurrentlyReadingResource> findAll() {
-        List<CurrentlyReadingResource> currentlyReadingResources = new ArrayList<>();
+    public List<CurrentlyReadingDto> findAll() {
+        List<CurrentlyReadingDto> currentlyReadingDtos = new ArrayList<>();
         currentlyReadingRepository.findAll().forEach(entity ->
-            currentlyReadingResources.add(currentlyReadingMapper.entityToResource(entity))
+            currentlyReadingDtos.add(currentlyReadingMapper.entityToResource(entity))
         );
-        return currentlyReadingResources;
+        return currentlyReadingDtos;
     }
 
     public void deleteById(Long id) {

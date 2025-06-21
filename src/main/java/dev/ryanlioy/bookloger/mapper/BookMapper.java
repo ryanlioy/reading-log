@@ -1,38 +1,38 @@
 package dev.ryanlioy.bookloger.mapper;
 
 import dev.ryanlioy.bookloger.entity.BookEntity;
-import dev.ryanlioy.bookloger.resource.BookResource;
+import dev.ryanlioy.bookloger.dto.BookDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BookMapper {
 
-    public BookEntity resourceToEntity(BookResource bookResource) {
+    public BookEntity resourceToEntity(BookDto bookDto) {
         BookEntity bookEntity = new BookEntity();
 
-        bookEntity.setId(bookResource.getId());
-        bookEntity.setSeriesId(bookResource.getSeriesId());
-        bookEntity.setTitle(bookResource.getTitle());
-        bookEntity.setAuthor(bookResource.getAuthor());
-        bookEntity.setPublishDate(bookResource.getPublishDate());
-        bookEntity.setGenres(bookResource.getGenres());
-        bookEntity.setPublisher(bookResource.getPublisher());
+        bookEntity.setId(bookDto.getId());
+        bookEntity.setSeriesId(bookDto.getSeriesId());
+        bookEntity.setTitle(bookDto.getTitle());
+        bookEntity.setAuthor(bookDto.getAuthor());
+        bookEntity.setPublishDate(bookDto.getPublishDate());
+        bookEntity.setGenres(bookDto.getGenres());
+        bookEntity.setPublisher(bookDto.getPublisher());
 
         return bookEntity;
     }
 
-    public BookResource entityToResource(BookEntity bookEntity) {
-        BookResource bookResource = new BookResource();
+    public BookDto entityToResource(BookEntity bookEntity) {
+        BookDto bookDto = new BookDto();
 
-        bookResource.setId(bookEntity.getId());
-        bookResource.setSeriesId(bookEntity.getSeriesId());
-        bookResource.setTitle(bookEntity.getTitle());
-        bookResource.setAuthor(bookEntity.getAuthor());
-        bookResource.setPublishDate(bookEntity.getPublishDate());
-        bookResource.setGenres(bookEntity.getGenres());
-        bookResource.setPublisher(bookEntity.getPublisher());
+        bookDto.setId(bookEntity.getId());
+        bookDto.setSeriesId(bookEntity.getSeriesId());
+        bookDto.setTitle(bookEntity.getTitle());
+        bookDto.setAuthor(bookEntity.getAuthor());
+        bookDto.setPublishDate(bookEntity.getPublishDate());
+        bookDto.setGenres(bookEntity.getGenres());
+        bookDto.setPublisher(bookEntity.getPublisher());
 
-        bookResource.setGenres(bookEntity.getGenres());
-        return bookResource;
+        bookDto.setGenres(bookEntity.getGenres());
+        return bookDto;
     }
 }

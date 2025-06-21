@@ -2,7 +2,7 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
-import dev.ryanlioy.bookloger.resource.BookResource;
+import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +25,12 @@ public class BookController {
 
     /**
      * Add a book
-     * @param bookResource book to add
+     * @param bookDto book to add
      * @return {@link ResponseEntity<BookEntity>}
      */
     @PostMapping("/add")
-    public ResponseEntity<BookResource> addBook(@RequestBody BookResource bookResource) {
-        return new ResponseEntity<>(bookService.createBook(bookResource), HttpStatus.CREATED);
+    public ResponseEntity<BookDto> addBook(@RequestBody BookDto bookDto) {
+        return new ResponseEntity<>(bookService.createBook(bookDto), HttpStatus.CREATED);
     }
 
     /**
@@ -39,16 +39,16 @@ public class BookController {
      * @return a book and 200 if found, otherwise 404 and no response body
      */
     @GetMapping("/{id}")
-    public ResponseEntity<BookResource> getBook(@PathVariable Long id) {
+    public ResponseEntity<BookDto> getBook(@PathVariable Long id) {
         Optional<BookEntity> optional = bookService.getBookById(id);
-        BookResource bookResource = null;
+        BookDto bookDto = null;
         HttpStatus status = HttpStatus.NO_CONTENT;
         if (optional.isPresent()) {
-            bookResource = bookMapper.entityToResource(optional.get());
+            bookDto = bookMapper.entityToResource(optional.get());
             status = HttpStatus.OK;
         }
 
-        return new  ResponseEntity<>(bookResource, status);
+        return new  ResponseEntity<>(bookDto, status);
     }
 
     /**
@@ -56,7 +56,7 @@ public class BookController {
      * @return a {@link List} of all books
      */
     @GetMapping("/all")
-    public ResponseEntity<List<BookResource>> getAllBooks() {
+    public ResponseEntity<List<BookDto>> getAllBooks() {
         return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
@@ -66,7 +66,7 @@ public class BookController {
      * @return 200 with no response body
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<BookResource> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<BookDto> deleteBook(@PathVariable Long id) {
         bookService.deleteBookById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

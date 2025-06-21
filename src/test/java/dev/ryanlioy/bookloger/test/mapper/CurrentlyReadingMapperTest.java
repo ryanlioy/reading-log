@@ -2,7 +2,7 @@ package dev.ryanlioy.bookloger.test.mapper;
 
 import dev.ryanlioy.bookloger.entity.CurrentlyReadingEntity;
 import dev.ryanlioy.bookloger.mapper.CurrentlyReadingMapper;
-import dev.ryanlioy.bookloger.resource.CurrentlyReadingResource;
+import dev.ryanlioy.bookloger.dto.CurrentlyReadingDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ public class CurrentlyReadingMapperTest {
 
     @Test
     public void resourceToEntity() {
-        CurrentlyReadingResource resource = new CurrentlyReadingResource();
+        CurrentlyReadingDto resource = new CurrentlyReadingDto();
         resource.setBookId(1L);
         resource.setUserId(2L);
         resource.setId(3L);
@@ -36,7 +36,7 @@ public class CurrentlyReadingMapperTest {
         entity.setUserId(2L);
         entity.setId(3L);
 
-        CurrentlyReadingResource resource = currentlyReadingMapper.entityToResource(entity);
+        CurrentlyReadingDto resource = currentlyReadingMapper.entityToResource(entity);
         assertThat(resource.getId()).isEqualTo(entity.getId());
         assertThat(resource.getUserId()).isEqualTo(entity.getUserId());
         assertThat(resource.getBookId()).isEqualTo(entity.getBookId());

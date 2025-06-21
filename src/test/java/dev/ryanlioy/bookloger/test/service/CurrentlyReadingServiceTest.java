@@ -3,7 +3,7 @@ package dev.ryanlioy.bookloger.test.service;
 import dev.ryanlioy.bookloger.entity.CurrentlyReadingEntity;
 import dev.ryanlioy.bookloger.mapper.CurrentlyReadingMapper;
 import dev.ryanlioy.bookloger.repository.CurrentlyReadingRepository;
-import dev.ryanlioy.bookloger.resource.CurrentlyReadingResource;
+import dev.ryanlioy.bookloger.dto.CurrentlyReadingDto;
 import dev.ryanlioy.bookloger.service.CurrentlyReadingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,9 +37,9 @@ public class CurrentlyReadingServiceTest {
     @Test
     public void findById_whenFound_returnResource() {
         when(currentlyReadingRepository.findById(any())).thenReturn(Optional.of(new CurrentlyReadingEntity()));
-        CurrentlyReadingResource resource = new CurrentlyReadingResource(1L);
+        CurrentlyReadingDto resource = new CurrentlyReadingDto(1L);
         when(currentlyReadingMapper.entityToResource(any())).thenReturn(resource);
-        CurrentlyReadingResource response = currentlyReadingService.findById(1L);
+        CurrentlyReadingDto response = currentlyReadingService.findById(1L);
 
         Assertions.assertEquals(resource, response);
     }
@@ -54,9 +54,9 @@ public class CurrentlyReadingServiceTest {
     @Test
     public void create_returnResource() {
         when(currentlyReadingRepository.save(any())).thenReturn(new CurrentlyReadingEntity());
-        when(currentlyReadingMapper.entityToResource(any())).thenReturn(new CurrentlyReadingResource(1L));
+        when(currentlyReadingMapper.entityToResource(any())).thenReturn(new CurrentlyReadingDto(1L));
 
-        CurrentlyReadingResource response = currentlyReadingService.create(new CurrentlyReadingResource());
+        CurrentlyReadingDto response = currentlyReadingService.create(new CurrentlyReadingDto());
 
         Assertions.assertNotNull(response.getId());
     }
@@ -64,9 +64,9 @@ public class CurrentlyReadingServiceTest {
     @Test
     public void findAll_whenFound_returnNonEmptyList() {
         when(currentlyReadingRepository.findAll()).thenReturn(List.of(new CurrentlyReadingEntity()));
-        when(currentlyReadingMapper.entityToResource(any())).thenReturn(new CurrentlyReadingResource());
+        when(currentlyReadingMapper.entityToResource(any())).thenReturn(new CurrentlyReadingDto());
 
-        List<CurrentlyReadingResource> response = currentlyReadingService.findAll();
+        List<CurrentlyReadingDto> response = currentlyReadingService.findAll();
         Assertions.assertFalse(response.isEmpty());
     }
 
@@ -74,7 +74,7 @@ public class CurrentlyReadingServiceTest {
     public void findAll_whenNotFound_returnEmptyList() {
         when(currentlyReadingRepository.findAll()).thenReturn(new ArrayList<>());
 
-        List<CurrentlyReadingResource> response = currentlyReadingService.findAll();
+        List<CurrentlyReadingDto> response = currentlyReadingService.findAll();
         Assertions.assertTrue(response.isEmpty());
     }
 

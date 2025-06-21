@@ -3,7 +3,7 @@ package dev.ryanlioy.bookloger.service;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
-import dev.ryanlioy.bookloger.resource.UserResource;
+import dev.ryanlioy.bookloger.dto.UserDto;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -22,8 +22,8 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public UserResource addUser(UserResource userResource) {
-        UserEntity entity = userMapper.resourceToEntity(userResource);
+    public UserDto addUser(UserDto userDto) {
+        UserEntity entity = userMapper.resourceToEntity(userDto);
         return userMapper.entityToResource(userRepository.save(entity));
     }
 

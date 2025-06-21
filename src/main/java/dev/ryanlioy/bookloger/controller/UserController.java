@@ -2,7 +2,7 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
-import dev.ryanlioy.bookloger.resource.UserResource;
+import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,26 +23,26 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<UserResource> addUser(@RequestBody UserResource userResource) {
-        UserResource resource = userService.addUser(userResource);
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
+        UserDto resource = userService.addUser(userDto);
 
         return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResource> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         Optional<UserEntity> optional = userService.getUserById(id);
-        UserResource userResource = null;
+        UserDto userDto = null;
         HttpStatus status = HttpStatus.NO_CONTENT;
         if (optional.isPresent()) {
-            userResource = userMapper.entityToResource(optional.get());
+            userDto = userMapper.entityToResource(optional.get());
             status = HttpStatus.OK;
         }
-        return new ResponseEntity<>(userResource,  status);
+        return new ResponseEntity<>(userDto,  status);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserResource> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<UserDto> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

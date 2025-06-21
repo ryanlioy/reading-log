@@ -2,7 +2,7 @@ package dev.ryanlioy.bookloger.test.mapper;
 
 import dev.ryanlioy.bookloger.entity.EntryEntity;
 import dev.ryanlioy.bookloger.mapper.EntryMapper;
-import dev.ryanlioy.bookloger.resource.EntryResource;
+import dev.ryanlioy.bookloger.dto.EntryDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class EntryMapperTest {
         entity.setUserId(2L);
         entity.setBookId(3L);
 
-        EntryResource resource = entryMapper.entityToResource(entity);
+        EntryDto resource = entryMapper.entityToResource(entity);
         Assertions.assertEquals(entity.getId(), resource.getId());
         Assertions.assertEquals(entity.getDescription(), resource.getDescription());
         Assertions.assertEquals(entity.getUserId(), resource.getUserId());
@@ -32,7 +32,7 @@ public class EntryMapperTest {
 
     @Test
     void resourceToEntityTest() {
-        EntryResource resource = new EntryResource();
+        EntryDto resource = new EntryDto();
         resource.setId(1L);
         resource.setDescription("description");
         resource.setUserId(2L);

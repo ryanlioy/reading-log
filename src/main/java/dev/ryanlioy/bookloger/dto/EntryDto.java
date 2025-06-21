@@ -1,16 +1,16 @@
-package dev.ryanlioy.bookloger.resource;
+package dev.ryanlioy.bookloger.dto;
 
 import lombok.Data;
 
 @Data
-public class EntryResource {
-    public  EntryResource() {}
+public class EntryDto {
+    public EntryDto() {}
 
-    public EntryResource(Long id) {
+    public EntryDto(Long id) {
         this.id = id;
     }
 
-    public EntryResource(Long id, Long userId, Long bookId) {
+    public EntryDto(Long id, Long userId, Long bookId) {
         this.id = id;
         this.userId = userId;
         this.bookId = bookId;

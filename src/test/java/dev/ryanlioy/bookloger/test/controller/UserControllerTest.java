@@ -3,7 +3,7 @@ package dev.ryanlioy.bookloger.test.controller;
 import dev.ryanlioy.bookloger.controller.UserController;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
-import dev.ryanlioy.bookloger.resource.UserResource;
+import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,17 +36,17 @@ public class UserControllerTest {
 
     @Test
     public void addUser() {
-        UserResource userResource = new UserResource();
-        when(userService.addUser(any())).thenReturn(userResource);
-        ResponseEntity<UserResource> responseEntity = userController.addUser(userResource);
+        UserDto userDto = new UserDto();
+        when(userService.addUser(any())).thenReturn(userDto);
+        ResponseEntity<UserDto> responseEntity = userController.addUser(userDto);
         Assertions.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        Assertions.assertEquals(userResource, responseEntity.getBody());
+        Assertions.assertEquals(userDto, responseEntity.getBody());
     }
 
     @Test
     public void getUserById_userFound() {
         when(userService.getUserById(any())).thenReturn(Optional.of(new UserEntity()));
-        ResponseEntity<UserResource> response = userController.getUser(1L);
+        ResponseEntity<UserDto> response = userController.getUser(1L);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -54,7 +54,7 @@ public class UserControllerTest {
     @Test
     public void getUserById_userNotFound() {
         when(userService.getUserById(any())).thenReturn(Optional.empty());
-        ResponseEntity<UserResource> response = userController.getUser(1L);
+        ResponseEntity<UserDto> response = userController.getUser(1L);
 
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }

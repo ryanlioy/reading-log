@@ -3,7 +3,7 @@ package dev.ryanlioy.bookloger.test.service;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
-import dev.ryanlioy.bookloger.resource.UserResource;
+import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,10 +57,10 @@ public class UserServiceTest {
     public void addUser() {
         UserEntity userEntity = new UserEntity();
         when(userRepository.save(any())).thenReturn(userEntity);
-        UserResource userResource = new UserResource();
-        when(userMapper.entityToResource(any())).thenReturn(userResource);
+        UserDto userDto = new UserDto();
+        when(userMapper.entityToResource(any())).thenReturn(userDto);
 
-        Assertions.assertEquals(userService.addUser(userResource), userResource);
+        Assertions.assertEquals(userService.addUser(userDto), userDto);
     }
 
     @Test

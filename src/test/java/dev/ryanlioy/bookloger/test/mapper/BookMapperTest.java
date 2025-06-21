@@ -2,7 +2,7 @@ package dev.ryanlioy.bookloger.test.mapper;
 
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
-import dev.ryanlioy.bookloger.resource.BookResource;
+import dev.ryanlioy.bookloger.dto.BookDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,35 +29,35 @@ public class BookMapperTest {
         bookEntity.setSeriesId(0);
         bookEntity.setPublishDate(new Date());
 
-        BookResource bookResource = bookMapper.entityToResource(bookEntity);
+        BookDto bookDto = bookMapper.entityToResource(bookEntity);
 
-        Assertions.assertEquals(bookResource.getId(), bookEntity.getId());
-        Assertions.assertEquals(bookResource.getAuthor(), bookEntity.getAuthor());
-        Assertions.assertEquals(bookResource.getTitle(), bookEntity.getTitle());
-        Assertions.assertEquals(bookResource.getGenres(), bookEntity.getGenres());
-        Assertions.assertEquals(bookResource.getPublisher(), bookEntity.getPublisher());
-        Assertions.assertEquals(bookResource.getSeriesId(), bookEntity.getSeriesId());
-        Assertions.assertEquals(bookResource.getPublishDate(), bookEntity.getPublishDate());
+        Assertions.assertEquals(bookDto.getId(), bookEntity.getId());
+        Assertions.assertEquals(bookDto.getAuthor(), bookEntity.getAuthor());
+        Assertions.assertEquals(bookDto.getTitle(), bookEntity.getTitle());
+        Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres());
+        Assertions.assertEquals(bookDto.getPublisher(), bookEntity.getPublisher());
+        Assertions.assertEquals(bookDto.getSeriesId(), bookEntity.getSeriesId());
+        Assertions.assertEquals(bookDto.getPublishDate(), bookEntity.getPublishDate());
     }
 
     @Test
     public void resourceToEntity() {
-        BookResource bookResource = new BookResource();
-        bookResource.setId(1L);
-        bookResource.setAuthor("author");
-        bookResource.setTitle("title");
-        bookResource.setGenres(new ArrayList<>());
-        bookResource.setPublisher("publisher");
-        bookResource.setSeriesId(0);
-        bookResource.setPublishDate(new Date());
+        BookDto bookDto = new BookDto();
+        bookDto.setId(1L);
+        bookDto.setAuthor("author");
+        bookDto.setTitle("title");
+        bookDto.setGenres(new ArrayList<>());
+        bookDto.setPublisher("publisher");
+        bookDto.setSeriesId(0);
+        bookDto.setPublishDate(new Date());
 
-        BookEntity bookEntity = bookMapper.resourceToEntity(bookResource);
-        Assertions.assertEquals(bookResource.getId(), bookEntity.getId());
-        Assertions.assertEquals(bookResource.getAuthor(), bookEntity.getAuthor());
-        Assertions.assertEquals(bookResource.getTitle(), bookEntity.getTitle());
-        Assertions.assertEquals(bookResource.getGenres(), bookEntity.getGenres());
-        Assertions.assertEquals(bookResource.getPublisher(), bookEntity.getPublisher());
-        Assertions.assertEquals(bookResource.getSeriesId(), bookEntity.getSeriesId());
-        Assertions.assertEquals(bookResource.getPublishDate(), bookEntity.getPublishDate());
+        BookEntity bookEntity = bookMapper.resourceToEntity(bookDto);
+        Assertions.assertEquals(bookDto.getId(), bookEntity.getId());
+        Assertions.assertEquals(bookDto.getAuthor(), bookEntity.getAuthor());
+        Assertions.assertEquals(bookDto.getTitle(), bookEntity.getTitle());
+        Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres());
+        Assertions.assertEquals(bookDto.getPublisher(), bookEntity.getPublisher());
+        Assertions.assertEquals(bookDto.getSeriesId(), bookEntity.getSeriesId());
+        Assertions.assertEquals(bookDto.getPublishDate(), bookEntity.getPublishDate());
     }
 }

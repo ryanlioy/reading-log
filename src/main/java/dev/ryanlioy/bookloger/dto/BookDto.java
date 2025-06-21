@@ -1,4 +1,4 @@
-package dev.ryanlioy.bookloger.resource;
+package dev.ryanlioy.bookloger.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Data
-public class BookResource {
+public class BookDto {
     @Id
     Long id;
     int seriesId;

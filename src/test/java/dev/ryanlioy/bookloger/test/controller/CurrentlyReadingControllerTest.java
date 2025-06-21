@@ -1,7 +1,7 @@
 package dev.ryanlioy.bookloger.test.controller;
 
 import dev.ryanlioy.bookloger.controller.CurrentlyReadingController;
-import dev.ryanlioy.bookloger.resource.CurrentlyReadingResource;
+import dev.ryanlioy.bookloger.dto.CurrentlyReadingDto;
 import dev.ryanlioy.bookloger.service.CurrentlyReadingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +29,8 @@ public class CurrentlyReadingControllerTest {
 
     @Test
     public void getCurrentlyReadingById_whenEntityExists_returnResourceAnd200() {
-        when(currentlyReadingService.findById(any())).thenReturn(new CurrentlyReadingResource(1L));
-        ResponseEntity<CurrentlyReadingResource> response = currentlyReadingController.getCurrentlyReading(1L);
+        when(currentlyReadingService.findById(any())).thenReturn(new CurrentlyReadingDto(1L));
+        ResponseEntity<CurrentlyReadingDto> response = currentlyReadingController.getCurrentlyReading(1L);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
@@ -40,7 +40,7 @@ public class CurrentlyReadingControllerTest {
     @Test
     public void getCurrentlyReadingById_whenEntityDoesNotExist_returnNoContent() {
         when(currentlyReadingService.findById(any())).thenReturn(null);
-        ResponseEntity<CurrentlyReadingResource> response = currentlyReadingController.getCurrentlyReading(1L);
+        ResponseEntity<CurrentlyReadingDto> response = currentlyReadingController.getCurrentlyReading(1L);
 
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         Assertions.assertNull(response.getBody());
@@ -48,9 +48,9 @@ public class CurrentlyReadingControllerTest {
 
     @Test
     public void createCurrentlyReading_returnResourceAnd200() {
-        when(currentlyReadingService.create(any())).thenReturn(new CurrentlyReadingResource(1L));
-        CurrentlyReadingResource resource = new CurrentlyReadingResource();
-        ResponseEntity<CurrentlyReadingResource> response = currentlyReadingController.create(resource);
+        when(currentlyReadingService.create(any())).thenReturn(new CurrentlyReadingDto(1L));
+        CurrentlyReadingDto resource = new CurrentlyReadingDto();
+        ResponseEntity<CurrentlyReadingDto> response = currentlyReadingController.create(resource);
 
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         Assertions.assertEquals(1L, response.getBody().getId());

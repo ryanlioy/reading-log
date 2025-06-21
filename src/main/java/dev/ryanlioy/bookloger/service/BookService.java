@@ -3,7 +3,7 @@ package dev.ryanlioy.bookloger.service;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
-import dev.ryanlioy.bookloger.resource.BookResource;
+import dev.ryanlioy.bookloger.dto.BookDto;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,20 +24,20 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public BookResource createBook(BookResource bookResource) {
-        BookEntity bookEntity = bookMapper.resourceToEntity(bookResource);
+    public BookDto createBook(BookDto bookDto) {
+        BookEntity bookEntity = bookMapper.resourceToEntity(bookDto);
         return bookMapper.entityToResource(bookRepository.save(bookEntity));
     }
 
-    public List<BookResource> getAllBooks() {
+    public List<BookDto> getAllBooks() {
         Iterable<BookEntity> entities = bookRepository.findAll();
-        List<BookResource> bookResources = new ArrayList<>();
+        List<BookDto> bookDtos = new ArrayList<>();
 
         for (BookEntity entity : entities) {
-            bookResources.add(bookMapper.entityToResource(entity));
+            bookDtos.add(bookMapper.entityToResource(entity));
         }
 
-        return bookResources;
+        return bookDtos;
     }
 
     public void deleteBookById(Long id) {

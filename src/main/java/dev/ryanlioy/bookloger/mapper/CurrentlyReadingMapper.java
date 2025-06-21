@@ -1,12 +1,12 @@
 package dev.ryanlioy.bookloger.mapper;
 
 import dev.ryanlioy.bookloger.entity.CurrentlyReadingEntity;
-import dev.ryanlioy.bookloger.resource.CurrentlyReadingResource;
+import dev.ryanlioy.bookloger.dto.CurrentlyReadingDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CurrentlyReadingMapper {
-    public CurrentlyReadingEntity resourceToEntity(CurrentlyReadingResource resource) {
+    public CurrentlyReadingEntity resourceToEntity(CurrentlyReadingDto resource) {
         CurrentlyReadingEntity entity = new CurrentlyReadingEntity();
         entity.setId(resource.getId());
         entity.setUserId(resource.getUserId());
@@ -15,8 +15,8 @@ public class CurrentlyReadingMapper {
         return entity;
     }
 
-    public CurrentlyReadingResource entityToResource(CurrentlyReadingEntity entity) {
-        CurrentlyReadingResource resource = new CurrentlyReadingResource();
+    public CurrentlyReadingDto entityToResource(CurrentlyReadingEntity entity) {
+        CurrentlyReadingDto resource = new CurrentlyReadingDto();
         resource.setId(entity.getId());
         resource.setUserId(entity.getUserId());
         resource.setBookId(entity.getBookId());

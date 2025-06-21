@@ -4,7 +4,7 @@ import dev.ryanlioy.bookloger.service.BookService;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
-import dev.ryanlioy.bookloger.resource.BookResource;
+import dev.ryanlioy.bookloger.dto.BookDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,10 +58,10 @@ public class BookServiceTest {
     @Test
     public void createBook_whenBookCreated_returnResource() {
         when(bookRepository.save(any())).thenReturn(new BookEntity());
-        BookResource bookResource = new BookResource();
-        bookResource.setId(1L);
-        when(bookMapper.entityToResource(any())).thenReturn(bookResource);
-        BookResource returnResource = bookService.createBook(new BookResource());
+        BookDto bookDto = new BookDto();
+        bookDto.setId(1L);
+        when(bookMapper.entityToResource(any())).thenReturn(bookDto);
+        BookDto returnResource = bookService.createBook(new BookDto());
 
         Assertions.assertNotNull(returnResource.getId());
     }
@@ -69,9 +69,9 @@ public class BookServiceTest {
     @Test
     public void getAllBooks_whenBooksFound_returnNonEmptyList() {
         when(bookRepository.findAll()).thenReturn(List.of(new BookEntity()));
-        when(bookMapper.entityToResource(any())).thenReturn(new BookResource());
+        when(bookMapper.entityToResource(any())).thenReturn(new BookDto());
 
-        List<BookResource> list = bookService.getAllBooks();
+        List<BookDto> list = bookService.getAllBooks();
         Assertions.assertFalse(list.isEmpty());
     }
 
@@ -79,7 +79,7 @@ public class BookServiceTest {
     public void getAllBooks_whenBooksNotFound_returnEmptyList() {
         when(bookRepository.findAll()).thenReturn(new ArrayList<>());
 
-        List<BookResource> list = bookService.getAllBooks();
+        List<BookDto> list = bookService.getAllBooks();
         Assertions.assertTrue(list.isEmpty());
     }
 

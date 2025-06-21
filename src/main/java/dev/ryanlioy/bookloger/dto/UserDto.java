@@ -1,4 +1,4 @@
-package dev.ryanlioy.bookloger.resource;
+package dev.ryanlioy.bookloger.dto;
 
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UserResource {
+public class UserDto {
     Long id;
     String username;
     List<BookEntity> currentlyReading;

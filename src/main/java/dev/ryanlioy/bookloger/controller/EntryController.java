@@ -2,7 +2,7 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.entity.EntryEntity;
 import dev.ryanlioy.bookloger.mapper.EntryMapper;
-import dev.ryanlioy.bookloger.resource.EntryResource;
+import dev.ryanlioy.bookloger.dto.EntryDto;
 import dev.ryanlioy.bookloger.service.EntryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,30 +24,30 @@ public class EntryController {
     }
 
     @PostMapping
-    public ResponseEntity<EntryResource> createEntry(@RequestBody EntryResource entryResource) {
-        var a = entryService.createEntry(entryResource);
+    public ResponseEntity<EntryDto> createEntry(@RequestBody EntryDto entryDto) {
+        var a = entryService.createEntry(entryDto);
         return new  ResponseEntity<>(a, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<EntryResource>> getEntriesByUserIdAndBookId(@RequestParam Long userId, @RequestParam Long bookId) {
+    public ResponseEntity<List<EntryDto>> getEntriesByUserIdAndBookId(@RequestParam Long userId, @RequestParam Long bookId) {
         return new ResponseEntity<>(entryService.getEntryByBookIdAndUserId(bookId, userId),  HttpStatus.OK);
     }
 
     @GetMapping("/{entryId}")
-    public ResponseEntity<EntryResource> getEntryById(@PathVariable Long entryId) {
+    public ResponseEntity<EntryDto> getEntryById(@PathVariable Long entryId) {
         Optional<EntryEntity> entryEntity = entryService.getEntryById(entryId);
-        EntryResource entryResource = null;
+        EntryDto entryDto = null;
         HttpStatus status = HttpStatus.NO_CONTENT;
         if (entryEntity.isPresent()) {
-            entryResource = entryMapper.entityToResource(entryEntity.get());
+            entryDto = entryMapper.entityToResource(entryEntity.get());
             status = HttpStatus.OK;
         }
-        return new  ResponseEntity<>(entryResource, status);
+        return new  ResponseEntity<>(entryDto, status);
     }
 
     @DeleteMapping("/{entryId}")
-    public ResponseEntity<EntryResource> deleteEntryById(@PathVariable Long entryId) {
+    public ResponseEntity<EntryDto> deleteEntryById(@PathVariable Long entryId) {
         entryService.deleteEntryById(entryId);
         return new  ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

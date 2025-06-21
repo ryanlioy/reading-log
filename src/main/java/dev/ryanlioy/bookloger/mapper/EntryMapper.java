@@ -1,28 +1,28 @@
 package dev.ryanlioy.bookloger.mapper;
 
 import dev.ryanlioy.bookloger.entity.EntryEntity;
-import dev.ryanlioy.bookloger.resource.EntryResource;
+import dev.ryanlioy.bookloger.dto.EntryDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EntryMapper {
-    public EntryEntity resourceToEntity(EntryResource entryResource) {
+    public EntryEntity resourceToEntity(EntryDto entryDto) {
         EntryEntity entryEntity = new EntryEntity();
-        entryEntity.setId(entryResource.getId());
-        entryEntity.setUserId(entryResource.getUserId());
-        entryEntity.setDescription(entryResource.getDescription());
-        entryEntity.setBookId(entryResource.getBookId());
+        entryEntity.setId(entryDto.getId());
+        entryEntity.setUserId(entryDto.getUserId());
+        entryEntity.setDescription(entryDto.getDescription());
+        entryEntity.setBookId(entryDto.getBookId());
 
         return entryEntity;
     }
 
-    public EntryResource entityToResource(EntryEntity entryEntity) {
-        EntryResource entryResource = new EntryResource();
-        entryResource.setId(entryEntity.getId());
-        entryResource.setUserId(entryEntity.getUserId());
-        entryResource.setBookId(entryEntity.getBookId());
-        entryResource.setDescription(entryEntity.getDescription());
+    public EntryDto entityToResource(EntryEntity entryEntity) {
+        EntryDto entryDto = new EntryDto();
+        entryDto.setId(entryEntity.getId());
+        entryDto.setUserId(entryEntity.getUserId());
+        entryDto.setBookId(entryEntity.getBookId());
+        entryDto.setDescription(entryEntity.getDescription());
 
-        return entryResource;
+        return entryDto;
     }
 }

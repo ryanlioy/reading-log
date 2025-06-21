@@ -1,12 +1,12 @@
 package dev.ryanlioy.bookloger.mapper;
 
 import dev.ryanlioy.bookloger.entity.UserEntity;
-import dev.ryanlioy.bookloger.resource.UserResource;
+import dev.ryanlioy.bookloger.dto.UserDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-    public UserEntity resourceToEntity(UserResource user) {
+    public UserEntity resourceToEntity(UserDto user) {
         UserEntity entity = new UserEntity();
 
         entity.setId(user.getId());
@@ -19,8 +19,8 @@ public class UserMapper {
         return entity;
     }
 
-    public UserResource entityToResource(UserEntity book) {
-        UserResource resource = new UserResource();
+    public UserDto entityToResource(UserEntity book) {
+        UserDto resource = new UserDto();
 
         resource.setId(book.getId());
         resource.setUsername(book.getUsername());
