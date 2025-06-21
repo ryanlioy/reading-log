@@ -12,7 +12,7 @@ import java.util.List;
 public class BookDto {
     @Id
     Long id;
-    int seriesId;
+    Long seriesId;
     String title;
     String author;
     String publisher;
