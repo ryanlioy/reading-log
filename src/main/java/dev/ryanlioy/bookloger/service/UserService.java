@@ -10,16 +10,25 @@ import java.util.Optional;
 
 @Component
 public class UserService {
-    private UserRepository userRepository;
-    private UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final BookService bookService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, BookService bookService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.bookService = bookService;
     }
 
-    public Optional<UserEntity> getUserById(Long id) {
-        return userRepository.findById(id);
+    public UserDto getUserById(Long id) {
+        Optional<UserEntity> userEntity = userRepository.findById(id);
+        UserDto userDto = null;
+        if (userEntity.isPresent()) {
+            userDto = userEntity.map(userMapper::entityToResource).orElse(null);
+            userDto.setCurrentlyReading(bookService.findAllCurrentlyReadingBooks(id));
+        }
+
+        return userDto;
     }
 
     public UserDto addUser(UserDto userDto) {

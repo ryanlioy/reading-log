@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -19,6 +19,6 @@ public class BookEntity {
     String title;
     String author;
     String publisher;
-    Date publishDate;
+    LocalDate publishDate;
     List<String> genres;
 }

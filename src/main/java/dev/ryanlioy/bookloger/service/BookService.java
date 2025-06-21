@@ -12,8 +12,8 @@ import java.util.Optional;
 
 @Component
 public class BookService {
-    private BookRepository bookRepository;
-    private BookMapper bookMapper;
+    private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
     public BookService(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
@@ -42,5 +42,9 @@ public class BookService {
 
     public void deleteBookById(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    public List<BookDto> findAllCurrentlyReadingBooks(Long userId) {
+        return bookRepository.getCurrentlyReadingBooksByUserId(userId).stream().map(bookMapper::entityToResource).toList();
     }
 }

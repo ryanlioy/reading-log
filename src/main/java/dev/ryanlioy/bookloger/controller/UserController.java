@@ -1,7 +1,5 @@
 package dev.ryanlioy.bookloger.controller;
 
-import dev.ryanlioy.bookloger.entity.UserEntity;
-import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -9,17 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private UserService userService;
-    private UserMapper userMapper;
+    private final UserService userService;
 
-    public UserController(UserService userService, UserMapper userMapper) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
 
     @PostMapping("/add")
@@ -31,14 +25,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
-        Optional<UserEntity> optional = userService.getUserById(id);
-        UserDto userDto = null;
-        HttpStatus status = HttpStatus.NO_CONTENT;
-        if (optional.isPresent()) {
-            userDto = userMapper.entityToResource(optional.get());
-            status = HttpStatus.OK;
+        UserDto user = userService.getUserById(id);
+        HttpStatus status = HttpStatus.OK;
+        if (user == null) {
+            status = HttpStatus.NO_CONTENT;
         }
-        return new ResponseEntity<>(userDto,  status);
+        return new ResponseEntity<>(user,  status);
     }
 
     @DeleteMapping("/{id}")

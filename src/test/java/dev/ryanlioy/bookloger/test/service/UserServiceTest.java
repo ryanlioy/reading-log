@@ -1,9 +1,11 @@
 package dev.ryanlioy.bookloger.test.service;
 
 import dev.ryanlioy.bookloger.entity.UserEntity;
+import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
 import dev.ryanlioy.bookloger.dto.UserDto;
+import dev.ryanlioy.bookloger.service.BookService;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,11 +28,14 @@ public class UserServiceTest {
     @Mock
     private UserMapper userMapper;
 
+    @Mock
+    private BookService bookService;
+
     private UserService userService;
 
     @BeforeEach
     public void setUp() {
-        userService = new UserService(userRepository, userMapper);
+        userService = new UserService(userRepository, userMapper, bookService);
     }
 
     @Test
@@ -38,19 +43,17 @@ public class UserServiceTest {
         UserEntity userEntity = new UserEntity();
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
 
-        Optional<UserEntity> user = userService.getUserById(1L);
-        Assertions.assertTrue(user.isPresent());
-        Assertions.assertEquals(user.get(), userEntity);
+        UserDto user = userService.getUserById(1L);
+        Assertions.assertEquals(1L, user.getId());
     }
 
     @Test
-    public void getUser_whenNoUserIsFound_returnEmptyOptional() {
+    public void getUser_whenNoUserIsFound_returnNull() {
         UserEntity userEntity = new UserEntity();
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
 
-        Optional<UserEntity> user = userService.getUserById(1L);
-        Assertions.assertTrue(user.isPresent());
-        Assertions.assertEquals(user.get(), userEntity);
+        UserDto user = userService.getUserById(1L);
+        Assertions.assertNull(user);
     }
 
     @Test

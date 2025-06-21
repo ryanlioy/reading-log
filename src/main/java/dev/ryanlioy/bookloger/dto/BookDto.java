@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -16,6 +16,6 @@ public class BookDto {
     String title;
     String author;
     String publisher;
-    Date publishDate;
+    LocalDate publishDate;
     List<String> genres;
 }
