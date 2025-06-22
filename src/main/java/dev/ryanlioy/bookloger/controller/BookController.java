@@ -60,6 +60,11 @@ public class BookController {
         return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
+    @GetMapping("/currentlyReading/{id}")
+    public ResponseEntity<List<BookDto>> getCurrentlyReading(@PathVariable Long id) {
+        return new ResponseEntity<>(bookService.findAllCurrentlyReadingBooks(id), HttpStatus.OK);
+    }
+
     /**
      * Delete a bok by ID
      * @param id ID of book to delete

@@ -42,6 +42,7 @@ public class UserServiceTest {
     public void getUser_whenUserIsFound_returnUser() {
         UserEntity userEntity = new UserEntity();
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+        when(userMapper.entityToResource(any())).thenReturn(new  UserDto(1L));
 
         UserDto user = userService.getUserById(1L);
         Assertions.assertEquals(1L, user.getId());
@@ -49,8 +50,7 @@ public class UserServiceTest {
 
     @Test
     public void getUser_whenNoUserIsFound_returnNull() {
-        UserEntity userEntity = new UserEntity();
-        when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         UserDto user = userService.getUserById(1L);
         Assertions.assertNull(user);

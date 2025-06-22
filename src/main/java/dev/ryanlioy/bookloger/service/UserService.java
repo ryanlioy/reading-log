@@ -24,7 +24,7 @@ public class UserService {
         Optional<UserEntity> userEntity = userRepository.findById(id);
         UserDto userDto = null;
         if (userEntity.isPresent()) {
-            userDto = userEntity.map(userMapper::entityToResource).orElse(null);
+            userDto = userMapper.entityToResource(userEntity.get());
             userDto.setCurrentlyReading(bookService.findAllCurrentlyReadingBooks(id));
         }
 

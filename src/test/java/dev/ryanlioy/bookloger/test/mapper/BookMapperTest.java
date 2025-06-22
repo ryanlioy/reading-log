@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class BookMapperTest {
     private BookMapper bookMapper;
@@ -26,8 +26,8 @@ public class BookMapperTest {
         bookEntity.setTitle("title");
         bookEntity.setGenres(new ArrayList<>());
         bookEntity.setPublisher("publisher");
-        bookEntity.setSeriesId(0);
-        bookEntity.setPublishDate(new Date());
+        bookEntity.setSeriesId(0L);
+        bookEntity.setPublishDate(LocalDate.of(1970, 1, 1));
 
         BookDto bookDto = bookMapper.entityToResource(bookEntity);
 
@@ -48,8 +48,8 @@ public class BookMapperTest {
         bookDto.setTitle("title");
         bookDto.setGenres(new ArrayList<>());
         bookDto.setPublisher("publisher");
-        bookDto.setSeriesId(0);
-        bookDto.setPublishDate(new Date());
+        bookDto.setSeriesId(0L);
+        bookDto.setPublishDate(LocalDate.of(1970, 1, 1));
 
         BookEntity bookEntity = bookMapper.resourceToEntity(bookDto);
         Assertions.assertEquals(bookDto.getId(), bookEntity.getId());

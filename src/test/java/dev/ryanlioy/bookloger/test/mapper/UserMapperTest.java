@@ -1,20 +1,28 @@
 package dev.ryanlioy.bookloger.test.mapper;
 
 import dev.ryanlioy.bookloger.entity.UserEntity;
+import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.dto.UserDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 
+@ExtendWith(MockitoExtension.class)
 public class UserMapperTest {
     private UserMapper userMapper;
 
+    @Mock
+    private BookMapper bookMapper;
+
     @BeforeEach
     public void setup() {
-        userMapper = new UserMapper();
+        userMapper = new UserMapper(bookMapper);
     }
 
     @Test
@@ -31,10 +39,10 @@ public class UserMapperTest {
 
         Assertions.assertEquals(userDto.getId(), userEntity.getId());
 
-        Assertions.assertEquals(userDto.getCurrentlyReading(), userEntity.getCurrentlyReading());
-        Assertions.assertEquals(userDto.getFinished(), userEntity.getFinished());
+        Assertions.assertEquals(userDto.getCurrentlyReading(), userEntity.getCurrentlyReading().stream().map(bookMapper::entityToResource).toList());
+        Assertions.assertEquals(userDto.getFinished(), userEntity.getFinished().stream().map(bookMapper::entityToResource).toList());
         Assertions.assertEquals(userDto.getUsername(), userEntity.getUsername());
-        Assertions.assertEquals(userDto.getFavorites(), userEntity.getFavorites());
+        Assertions.assertEquals(userDto.getFavorites(), userEntity.getFavorites().stream().map(bookMapper::entityToResource).toList());
         Assertions.assertEquals(userDto.getUsername(), userEntity.getUsername());
         Assertions.assertEquals(userDto.getId(), userEntity.getId());
     }
@@ -50,9 +58,9 @@ public class UserMapperTest {
 
         UserEntity userEntity = userMapper.resourceToEntity(userDto);
         Assertions.assertEquals(userDto.getId(), userEntity.getId());
-        Assertions.assertEquals(userDto.getCurrentlyReading(), userEntity.getCurrentlyReading());
-        Assertions.assertEquals(userDto.getFinished(), userEntity.getFinished());
-        Assertions.assertEquals(userDto.getFavorites(), userEntity.getFavorites());
+        Assertions.assertEquals(userDto.getCurrentlyReading(), userEntity.getCurrentlyReading().stream().map(bookMapper::entityToResource).toList());
+        Assertions.assertEquals(userDto.getFinished(), userEntity.getFinished().stream().map(bookMapper::entityToResource).toList());
+        Assertions.assertEquals(userDto.getFavorites(), userEntity.getFavorites().stream().map(bookMapper::entityToResource).toList());
         Assertions.assertEquals(userDto.getUsername(), userEntity.getUsername());
     }
 }
