@@ -15,18 +15,11 @@ public class UserEntity {
     Long id;
     String username;
     @OneToMany
-    List<BookEntity> currentlyReading;
+    List<BookEntity> currentlyReading = new ArrayList<>();
     @OneToMany
-    List<BookEntity> finished;
+    List<BookEntity> finished = new ArrayList<>();
     @OneToMany
-    List<BookEntity> favorites;
+    List<BookEntity> favorites = new ArrayList<>();
     @OneToMany
-    List<BookEntity> readList;
-
-    public UserEntity() {
-        currentlyReading = new ArrayList<>();
-        finished = new ArrayList<>();
-        favorites = new ArrayList<>();
-        readList = new ArrayList<>();
-    }
+    List<BookEntity> readList = new ArrayList<>();
 }
