@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "currently_reading")
 public class CurrentlyReadingEntity {
     public CurrentlyReadingEntity() {}
 
