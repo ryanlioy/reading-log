@@ -14,10 +14,12 @@ import java.util.Optional;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private GenreService genreService;
 
-    public BookService(BookRepository bookRepository, BookMapper bookMapper) {
+    public BookService(BookRepository bookRepository, BookMapper bookMapper,  GenreService genreService) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+        this.genreService = genreService;
     }
 
     public Optional<BookEntity> getBookById(Long id) {
@@ -25,6 +27,12 @@ public class BookService {
     }
 
     public BookDto createBook(BookDto bookDto) {
+        // check if genre exists
+        bookDto.getGenres().forEach(genre -> {
+            if (genreService.getGenre(genre.getId()) == null) {
+                throw new IllegalArgumentException("Genre with ID=" + genre.getId() + " does not exist");
+            }
+        });
         BookEntity bookEntity = bookMapper.resourceToEntity(bookDto);
         return bookMapper.entityToResource(bookRepository.save(bookEntity));
     }

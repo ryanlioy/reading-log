@@ -39,4 +39,11 @@ public class GenreService {
     public void deleteGenre(Long id) {
         genreRepository.deleteById(id);
     }
+
+    public List<GenreDto> getAllGenresByBookId(Long bookId) {
+        List<GenreEntity> genres = genreRepository.findAllByBookId(bookId);
+        List<GenreDto> dtos = new ArrayList<>();
+        genres.forEach(entity -> dtos.add(genreMapper.entityToDto(entity)));
+        return dtos;
+    }
 }

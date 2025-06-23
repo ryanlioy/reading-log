@@ -6,6 +6,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BookMapper {
+    private final GenreMapper genreMapper;
+
+    public BookMapper(GenreMapper genreMapper) {
+        this.genreMapper = genreMapper;
+    }
 
     public BookEntity resourceToEntity(BookDto bookDto) {
         BookEntity bookEntity = new BookEntity();
@@ -15,7 +20,7 @@ public class BookMapper {
         bookEntity.setTitle(bookDto.getTitle());
         bookEntity.setAuthor(bookDto.getAuthor());
         bookEntity.setPublishDate(bookDto.getPublishDate());
-        bookEntity.setGenres(bookDto.getGenres());
+        bookEntity.setGenres(bookDto.getGenres().stream().map(genreMapper::dtoToEntity).toList());
         bookEntity.setPublisher(bookDto.getPublisher());
 
         return bookEntity;
@@ -29,10 +34,9 @@ public class BookMapper {
         bookDto.setTitle(bookEntity.getTitle());
         bookDto.setAuthor(bookEntity.getAuthor());
         bookDto.setPublishDate(bookEntity.getPublishDate());
-        bookDto.setGenres(bookEntity.getGenres());
+        bookDto.setGenres(bookEntity.getGenres().stream().map(genreMapper::entityToDto).toList());
         bookDto.setPublisher(bookEntity.getPublisher());
 
-        bookDto.setGenres(bookEntity.getGenres());
         return bookDto;
     }
 }

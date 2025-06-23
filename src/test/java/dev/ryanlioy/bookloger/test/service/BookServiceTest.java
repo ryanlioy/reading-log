@@ -5,6 +5,7 @@ import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
 import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.service.GenreService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +28,14 @@ public class BookServiceTest {
     @Mock
     private BookMapper bookMapper;
 
+    @Mock
+    private GenreService genreService;
+
     private BookService bookService;
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepository, bookMapper);
+        bookService = new BookService(bookRepository, bookMapper, genreService);
     }
 
     @Test

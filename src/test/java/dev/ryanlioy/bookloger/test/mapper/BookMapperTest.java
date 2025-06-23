@@ -3,19 +3,27 @@ package dev.ryanlioy.bookloger.test.mapper;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.mapper.GenreMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+@ExtendWith(MockitoExtension.class)
 public class BookMapperTest {
     private BookMapper bookMapper;
 
+    @Mock
+    private GenreMapper genreMapper;
+
     @BeforeEach
     void setUp() {
-        bookMapper = new BookMapper();
+        bookMapper = new BookMapper(genreMapper);
     }
 
     @Test
@@ -34,7 +42,7 @@ public class BookMapperTest {
         Assertions.assertEquals(bookDto.getId(), bookEntity.getId());
         Assertions.assertEquals(bookDto.getAuthor(), bookEntity.getAuthor());
         Assertions.assertEquals(bookDto.getTitle(), bookEntity.getTitle());
-        Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres());
+        Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres().stream().map(genreMapper::entityToDto).toList());
         Assertions.assertEquals(bookDto.getPublisher(), bookEntity.getPublisher());
         Assertions.assertEquals(bookDto.getSeriesId(), bookEntity.getSeriesId());
         Assertions.assertEquals(bookDto.getPublishDate(), bookEntity.getPublishDate());
@@ -55,7 +63,7 @@ public class BookMapperTest {
         Assertions.assertEquals(bookDto.getId(), bookEntity.getId());
         Assertions.assertEquals(bookDto.getAuthor(), bookEntity.getAuthor());
         Assertions.assertEquals(bookDto.getTitle(), bookEntity.getTitle());
-        Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres());
+        Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres().stream().map(genreMapper::entityToDto).toList());
         Assertions.assertEquals(bookDto.getPublisher(), bookEntity.getPublisher());
         Assertions.assertEquals(bookDto.getSeriesId(), bookEntity.getSeriesId());
         Assertions.assertEquals(bookDto.getPublishDate(), bookEntity.getPublishDate());

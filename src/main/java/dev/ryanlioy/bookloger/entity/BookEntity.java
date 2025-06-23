@@ -1,9 +1,6 @@
 package dev.ryanlioy.bookloger.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -20,5 +17,6 @@ public class BookEntity {
     String author;
     String publisher;
     LocalDate publishDate;
-    List<String> genres;
+    @OneToMany(mappedBy = "id")
+    List<GenreEntity> genres;
 }

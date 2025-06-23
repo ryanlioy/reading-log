@@ -1,13 +1,11 @@
 package dev.ryanlioy.bookloger.dto;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Entity
 @Data
 public class BookDto {
     @Id
@@ -17,5 +15,5 @@ public class BookDto {
     String author;
     String publisher;
     LocalDate publishDate;
-    List<String> genres;
+    List<GenreDto> genres;
 }

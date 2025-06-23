@@ -24,7 +24,7 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GenreDto> getGenreById(@PathVariable long id) {
+    public ResponseEntity<GenreDto> getGenreById(@PathVariable Long id) {
         GenreDto dto = genreService.getGenre(id);
         if (dto == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -38,8 +38,13 @@ public class GenreController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<GenreDto> deleteGenre(@PathVariable long id) {
+    public ResponseEntity<GenreDto> deleteGenre(@PathVariable Long id) {
         genreService.deleteGenre(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/book/{bookId}")
+    public ResponseEntity<List<GenreDto>> getGenesByBookId(@PathVariable Long bookId) {
+        return new ResponseEntity<>(genreService.getAllGenresByBookId(bookId), HttpStatus.OK) ;
     }
 }
