@@ -48,7 +48,7 @@ public class BookController {
             status = HttpStatus.OK;
         }
 
-        return new  ResponseEntity<>(bookDto, status);
+        return new ResponseEntity<>(bookDto, status);
     }
 
     /**

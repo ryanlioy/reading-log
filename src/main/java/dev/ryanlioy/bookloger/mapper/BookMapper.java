@@ -32,7 +32,6 @@ public class BookMapper {
         bookDto.setGenres(bookEntity.getGenres());
         bookDto.setPublisher(bookEntity.getPublisher());
 
-        bookDto.setGenres(bookEntity.getGenres());
         return bookDto;
     }
 }
