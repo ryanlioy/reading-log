@@ -1,5 +1,6 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.CollectionType;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
@@ -44,7 +45,7 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    public List<BookDto> findAllCurrentlyReadingBooks(Long userId) {
-        return bookRepository.getCurrentlyReadingBooksByUserId(userId).stream().map(bookMapper::entityToResource).toList();
+    public List<BookDto> findAllBooksInCollectionByUserIdAndType(Long userId, CollectionType type) {
+        return bookRepository.getCollectionByUserIdAndType(userId, type.name()).stream().map(bookMapper::entityToResource).toList();
     }
 }

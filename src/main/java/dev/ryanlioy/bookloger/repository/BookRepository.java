@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BookRepository extends CrudRepository<BookEntity, Long> {
-    @Query(value = "SELECT book.* FROM currently_reading INNER JOIN book ON currently_reading.book_id = book.id WHERE user_id = :userId", nativeQuery = true)
-    List<BookEntity> getCurrentlyReadingBooksByUserId(@Param("userId") Long userId);
+    @Query(value = "SELECT book.* FROM collection_item INNER JOIN book ON collection_item.book_id = book.id WHERE user_id = :userId AND collection_type = :type", nativeQuery = true)
+    List<BookEntity> getCollectionByUserIdAndType(@Param("userId") Long userId, @Param("type") String type);
 }

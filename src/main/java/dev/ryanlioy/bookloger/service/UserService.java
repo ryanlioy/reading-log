@@ -1,5 +1,6 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.CollectionType;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
@@ -25,7 +26,10 @@ public class UserService {
         UserDto userDto = null;
         if (userEntity.isPresent()) {
             userDto = userMapper.entityToResource(userEntity.get());
-            userDto.setCurrentlyReading(bookService.findAllCurrentlyReadingBooks(id));
+            userDto.setCurrentlyReading(bookService.findAllBooksInCollectionByUserIdAndType(id, CollectionType.CURRENTLY_READING));
+            userDto.setFinished(bookService.findAllBooksInCollectionByUserIdAndType(id, CollectionType.FINISHED));
+            userDto.setFavorites(bookService.findAllBooksInCollectionByUserIdAndType(id, CollectionType.FAVORITES));
+            userDto.setReadList(bookService.findAllBooksInCollectionByUserIdAndType(id, CollectionType.READ_LIST));
         }
 
         return userDto;

@@ -1,5 +1,6 @@
 package dev.ryanlioy.bookloger.controller;
 
+import dev.ryanlioy.bookloger.constants.CollectionType;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.dto.BookDto;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static dev.ryanlioy.bookloger.constants.CollectionType.convertFromCamelCase;
 
 @Controller
 @RequestMapping("/book")
@@ -60,9 +63,9 @@ public class BookController {
         return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
-    @GetMapping("/currentlyReading/{id}")
-    public ResponseEntity<List<BookDto>> getCurrentlyReading(@PathVariable Long id) {
-        return new ResponseEntity<>(bookService.findAllCurrentlyReadingBooks(id), HttpStatus.OK);
+    @GetMapping("/collection/{type}/user/{userId}")
+    public ResponseEntity<List<BookDto>> getCollectionByUser(@PathVariable String type, @PathVariable Long userId) {
+        return new ResponseEntity<>(bookService.findAllBooksInCollectionByUserIdAndType(userId, convertFromCamelCase(type)), HttpStatus.OK);
     }
 
     /**
