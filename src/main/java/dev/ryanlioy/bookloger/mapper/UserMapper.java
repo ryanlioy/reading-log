@@ -1,38 +1,47 @@
 package dev.ryanlioy.bookloger.mapper;
 
+import dev.ryanlioy.bookloger.dto.CollectionDto;
+import dev.ryanlioy.bookloger.entity.CollectionEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.dto.UserDto;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Component
 public class UserMapper {
-    private final BookMapper bookMapper;
+    private final CollectionMapper collectionMapper;
 
-    public UserMapper(BookMapper bookMapper) {
-        this.bookMapper = bookMapper;
+    public UserMapper(CollectionMapper collectionMapper) {
+        this.collectionMapper = collectionMapper;
     }
-    public UserEntity resourceToEntity(UserDto user) {
+    public UserEntity dtoToEntity(UserDto user) {
         UserEntity entity = new UserEntity();
 
         entity.setId(user.getId());
         entity.setUsername(user.getUsername());
-        entity.setFavorites(user.getFavorites() != null ? user.getFavorites().stream().map(bookMapper::resourceToEntity).toList(): null);
-        entity.setFinished(user.getFinished()  != null ? user.getFinished().stream().map(bookMapper::resourceToEntity).toList(): null);
-        entity.setCurrentlyReading(user.getCurrentlyReading() != null ? user.getCurrentlyReading().stream().map(bookMapper::resourceToEntity).toList(): null);
-        entity.setReadList(user.getReadList() != null ? user.getReadList().stream().map(bookMapper::resourceToEntity).toList(): null);;
+
+        List<CollectionEntity> collectionEntities = new ArrayList<>();
+        if (user.getCollections() != null) {
+            user.getCollections().values().forEach(dto -> collectionEntities.add(collectionMapper.dtoToEntity(dto)));
+        }
+        entity.setCollections(collectionEntities);
 
         return entity;
     }
 
-    public UserDto entityToResource(UserEntity book) {
+    public UserDto entityToDto(UserEntity entity) {
         UserDto resource = new UserDto();
 
-        resource.setId(book.getId());
-        resource.setUsername(book.getUsername());
-        resource.setFavorites(book.getFavorites() != null ? book.getFavorites().stream().map(bookMapper::entityToResource).toList() : null);
-        resource.setFinished(book.getFinished() != null ? book.getFinished().stream().map(bookMapper::entityToResource).toList() : null);
-        resource.setCurrentlyReading(book.getCurrentlyReading() != null ? book.getCurrentlyReading().stream().map(bookMapper::entityToResource).toList() : null);
-        resource.setReadList(book.getReadList() != null ? book.getReadList().stream().map(bookMapper::entityToResource).toList() : null);
+        resource.setId(entity.getId());
+        resource.setUsername(entity.getUsername());
+
+        Map<String, CollectionDto> collections = new HashMap<>();
+        entity.getCollections().forEach(dto -> collections.put(dto.getTitle(), collectionMapper.entityToDto(dto)));
+        resource.setCollections(collections);
 
         return resource;
     }

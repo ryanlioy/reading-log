@@ -15,11 +15,5 @@ public class UserEntity {
     Long id;
     String username;
     @OneToMany
-    List<BookEntity> currentlyReading = new ArrayList<>();
-    @OneToMany
-    List<BookEntity> finished = new ArrayList<>();
-    @OneToMany
-    List<BookEntity> favorites = new ArrayList<>();
-    @OneToMany
-    List<BookEntity> readList = new ArrayList<>();
+    List<CollectionEntity> collections = new ArrayList<>();
 }

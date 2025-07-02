@@ -5,7 +5,6 @@ import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
 import dev.ryanlioy.bookloger.dto.BookDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -41,8 +42,8 @@ public class BookServiceTest {
         when(bookRepository.findById((any()))).thenReturn(Optional.of(bookEntity));
         Optional<BookEntity> entity = bookService.getBookById(1L);
 
-        Assertions.assertTrue(entity.isPresent());
-        Assertions.assertEquals(bookEntity, entity.get());
+        assertTrue(entity.isPresent());
+        assertEquals(bookEntity, entity.get());
     }
 
     @Test
@@ -52,7 +53,7 @@ public class BookServiceTest {
         when(bookRepository.findById((any()))).thenReturn(Optional.empty());
         Optional<BookEntity> entity = bookService.getBookById(1L);
 
-        Assertions.assertFalse(entity.isPresent());
+        assertFalse(entity.isPresent());
     }
 
     @Test
@@ -63,7 +64,7 @@ public class BookServiceTest {
         when(bookMapper.entityToResource(any())).thenReturn(bookDto);
         BookDto returnResource = bookService.createBook(new BookDto());
 
-        Assertions.assertNotNull(returnResource.getId());
+        assertNotNull(returnResource.getId());
     }
 
     @Test
@@ -72,7 +73,7 @@ public class BookServiceTest {
         when(bookMapper.entityToResource(any())).thenReturn(new BookDto());
 
         List<BookDto> list = bookService.getAllBooks();
-        Assertions.assertFalse(list.isEmpty());
+        assertFalse(list.isEmpty());
     }
 
     @Test
@@ -80,7 +81,25 @@ public class BookServiceTest {
         when(bookRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<BookDto> list = bookService.getAllBooks();
-        Assertions.assertTrue(list.isEmpty());
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void getAllBooksById_whenBooksFound_returnNonEmptyList() {
+        when(bookRepository.findAllById(any())).thenReturn(List.of(new BookEntity()));
+        BookDto bookDto = new BookDto();
+        when(bookMapper.entityToResource(any())).thenReturn(bookDto);
+        List<BookDto> response = bookService.getAllBooksById(new ArrayList<>());
+        assertFalse(response.isEmpty());
+        assertEquals(response.getFirst(), bookDto);
+    }
+
+    @Test
+    public void getAllBooksById_whenBooksNotFound_returnEmptyList() {
+        when(bookRepository.findAllById(any())).thenReturn(new ArrayList<>());
+
+        List<BookDto> response = bookService.getAllBooksById(new ArrayList<>());
+        assertTrue(response.isEmpty());
     }
 
     @Test

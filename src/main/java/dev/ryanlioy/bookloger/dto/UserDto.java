@@ -2,7 +2,7 @@ package dev.ryanlioy.bookloger.dto;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 public class UserDto {
@@ -12,8 +12,5 @@ public class UserDto {
     }
     Long id;
     String username;
-    List<BookDto> currentlyReading;
-    List<BookDto> finished;
-    List<BookDto> favorites;
-    List<BookDto> readList;
+    Map<String, CollectionDto> collections; // TODO not sure if a map or list would be best here
 }
