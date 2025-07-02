@@ -16,6 +16,6 @@ public class CollectionEntity {
     private String description;
     // default collections should not allow title and description changes
     private Boolean isDefaultCollection; // TODO better name and actually enforce this
-    @OneToMany
+    @ManyToMany(targetEntity = BookEntity.class, fetch = FetchType.EAGER)
     private List<BookEntity> books;
 }

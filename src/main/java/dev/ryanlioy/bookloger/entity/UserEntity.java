@@ -14,6 +14,6 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     String username;
-    @OneToMany
-    List<CollectionEntity> collections = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    List<CollectionEntity> collections = new ArrayList<>(); // TODO deleting user doesn't delete collections
 }
