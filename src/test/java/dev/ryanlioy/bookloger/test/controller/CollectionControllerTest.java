@@ -66,7 +66,22 @@ public class CollectionControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
-    // TODO tests for getCollectionItemsByUserId()
+    @Test
+    public void getCollectionItemsByUserId_whenEntitiesExist_returnNonEmptyList() {
+        CollectionDto dto = new CollectionDto(1L);
+        when(collectionService.findAllByUserId(any())).thenReturn(List.of(dto));
+        ResponseEntity<List<CollectionDto>> response = collectionItemController.getCollectionItemsByUserId(1L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dto, response.getBody().getFirst());
+    }
+
+    @Test
+    public void getCollectionItemsByUserId_whenNoEntitiesExist_returnEmptyList() {
+        when(collectionService.findAllByUserId(any())).thenReturn(List.of());
+        ResponseEntity<List<CollectionDto>> response = collectionItemController.getCollectionItemsByUserId(1L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(0, response.getBody().size());
+    }
 
     @Test
     public void deleteById() {

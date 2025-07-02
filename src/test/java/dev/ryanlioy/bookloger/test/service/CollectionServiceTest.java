@@ -85,6 +85,23 @@ public class CollectionServiceTest {
     }
 
     @Test
+    public void findAllByUserId_whenFound_returnNonEmptyList() {
+        when(collectionItemRepository.findAllByUserId(any())).thenReturn(List.of(new CollectionEntity()));
+        CollectionDto dto =  new CollectionDto();
+        when(collectionMapper.entityToDto(any())).thenReturn(dto);
+        List<CollectionDto> response = collectionService.findAllByUserId(1L);
+        assertThat(response.isEmpty()).isFalse();
+        assertEquals(response.getFirst(), dto);
+    }
+
+    @Test
+    public void findAllByUserId_whenNotFound_returnEmptyList() {
+        when(collectionItemRepository.findAllByUserId(any())).thenReturn(new ArrayList<>());
+        List<CollectionDto> response = collectionService.findAllByUserId(1L);
+        assertThat(response.isEmpty()).isTrue();
+    }
+
+    @Test
     public void deleteById_deleteEntity() {
         collectionService.deleteById(1L);
 

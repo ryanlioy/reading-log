@@ -2,6 +2,7 @@ package dev.ryanlioy.bookloger.test.mapper;
 
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
+import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.entity.CollectionEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
@@ -28,7 +29,25 @@ public class CollectionMapperTest {
         collectionMapper = new CollectionMapper(bookMapper);
     }
 
-    // TODO test for createDtoToEntity()
+    @Test
+    public void createDtoToEntity() {
+        CreateCollectionDto createCollectionDto = new CreateCollectionDto();
+        createCollectionDto.setId(1L);
+        createCollectionDto.setTitle("title");
+        createCollectionDto.setDescription("description");
+        createCollectionDto.setUserId(1L);
+        createCollectionDto.setIsDefaultCollection(true);
+        createCollectionDto.setBookIds(List.of(1L));
+
+        CollectionEntity entity = collectionMapper.createDtoToEntity(createCollectionDto, List.of(new BookDto()));
+        assertThat(entity).isNotNull();
+        assertThat(entity.getId()).isEqualTo(createCollectionDto.getId());
+        assertThat(entity.getTitle()).isEqualTo(createCollectionDto.getTitle());
+        assertThat(entity.getDescription()).isEqualTo(createCollectionDto.getDescription());
+        assertThat(entity.getUserId()).isEqualTo(createCollectionDto.getUserId());
+        assertThat(entity.getIsDefaultCollection()).isEqualTo(createCollectionDto.getIsDefaultCollection());
+        assertThat(entity.getBooks().size()).isEqualTo(1);
+    }
 
     @Test
     public void entityToDto() {
