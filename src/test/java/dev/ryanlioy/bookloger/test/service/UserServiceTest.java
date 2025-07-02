@@ -1,13 +1,11 @@
 package dev.ryanlioy.bookloger.test.service;
 
 import dev.ryanlioy.bookloger.entity.UserEntity;
-import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
 import dev.ryanlioy.bookloger.dto.UserDto;
-import dev.ryanlioy.bookloger.service.BookService;
+import dev.ryanlioy.bookloger.service.CollectionService;
 import dev.ryanlioy.bookloger.service.UserService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -29,23 +29,23 @@ public class UserServiceTest {
     private UserMapper userMapper;
 
     @Mock
-    private BookService bookService;
+    private CollectionService collectionService;
 
     private UserService userService;
 
     @BeforeEach
     public void setUp() {
-        userService = new UserService(userRepository, userMapper, bookService);
+        userService = new UserService(userRepository, userMapper, collectionService);
     }
 
     @Test
     public void getUser_whenUserIsFound_returnUser() {
         UserEntity userEntity = new UserEntity();
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
-        when(userMapper.entityToResource(any())).thenReturn(new  UserDto(1L));
+        when(userMapper.entityToDto(any())).thenReturn(new  UserDto(1L));
 
         UserDto user = userService.getUserById(1L);
-        Assertions.assertEquals(1L, user.getId());
+        assertEquals(1L, user.getId());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class UserServiceTest {
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         UserDto user = userService.getUserById(1L);
-        Assertions.assertNull(user);
+        assertNull(user);
     }
 
     @Test
@@ -61,9 +61,10 @@ public class UserServiceTest {
         UserEntity userEntity = new UserEntity();
         when(userRepository.save(any())).thenReturn(userEntity);
         UserDto userDto = new UserDto();
-        when(userMapper.entityToResource(any())).thenReturn(userDto);
+        when(userMapper.entityToDto(any())).thenReturn(userDto);
+        when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
 
-        Assertions.assertEquals(userService.addUser(userDto), userDto);
+        assertEquals(userService.addUser(userDto), userDto);
     }
 
     @Test

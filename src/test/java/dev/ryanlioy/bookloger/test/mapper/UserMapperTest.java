@@ -1,66 +1,58 @@
 package dev.ryanlioy.bookloger.test.mapper;
 
+import dev.ryanlioy.bookloger.dto.CollectionDto;
+import dev.ryanlioy.bookloger.entity.CollectionEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
-import dev.ryanlioy.bookloger.mapper.BookMapper;
+import dev.ryanlioy.bookloger.mapper.CollectionMapper;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.dto.UserDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class UserMapperTest {
     private UserMapper userMapper;
 
     @Mock
-    private BookMapper bookMapper;
+    private CollectionMapper collectionMapper;
 
     @BeforeEach
     public void setup() {
-        userMapper = new UserMapper(bookMapper);
+        userMapper = new UserMapper(collectionMapper);
     }
 
     @Test
-    public void entityToResource() {
+    public void entityToDto() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setCurrentlyReading(new ArrayList<>());
         userEntity.setId(1L);
         userEntity.setUsername("username");
-        userEntity.setFinished(new ArrayList<>());
-        userEntity.setFavorites(new ArrayList<>());
-        userEntity.setUsername("username");
+        userEntity.setCollections(List.of(new CollectionEntity()));
 
-        UserDto userDto = userMapper.entityToResource(userEntity);
+        UserDto userDto = userMapper.entityToDto(userEntity);
 
-        Assertions.assertEquals(userDto.getId(), userEntity.getId());
-
-        Assertions.assertEquals(userDto.getCurrentlyReading(), userEntity.getCurrentlyReading().stream().map(bookMapper::entityToResource).toList());
-        Assertions.assertEquals(userDto.getFinished(), userEntity.getFinished().stream().map(bookMapper::entityToResource).toList());
-        Assertions.assertEquals(userDto.getUsername(), userEntity.getUsername());
-        Assertions.assertEquals(userDto.getFavorites(), userEntity.getFavorites().stream().map(bookMapper::entityToResource).toList());
-        Assertions.assertEquals(userDto.getUsername(), userEntity.getUsername());
-        Assertions.assertEquals(userDto.getId(), userEntity.getId());
+        assertEquals(userDto.getId(), userEntity.getId());
+        assertEquals(userDto.getUsername(), userEntity.getUsername());
+        assertEquals(userDto.getCollections().size(), userEntity.getCollections().size());
     }
 
     @Test
-    public void resourceToEntity() {
+    public void dtoToEntity() {
         UserDto userDto = new UserDto();
-        userDto.setCurrentlyReading(new ArrayList<>());
         userDto.setId(1L);
         userDto.setUsername("username");
-        userDto.setFinished(new ArrayList<>());
-        userDto.setFavorites(new ArrayList<>());
+        userDto.setCollections(Map.of("title", new CollectionDto()));
 
-        UserEntity userEntity = userMapper.resourceToEntity(userDto);
-        Assertions.assertEquals(userDto.getId(), userEntity.getId());
-        Assertions.assertEquals(userDto.getCurrentlyReading(), userEntity.getCurrentlyReading().stream().map(bookMapper::entityToResource).toList());
-        Assertions.assertEquals(userDto.getFinished(), userEntity.getFinished().stream().map(bookMapper::entityToResource).toList());
-        Assertions.assertEquals(userDto.getFavorites(), userEntity.getFavorites().stream().map(bookMapper::entityToResource).toList());
-        Assertions.assertEquals(userDto.getUsername(), userEntity.getUsername());
+        UserEntity userEntity = userMapper.dtoToEntity(userDto);
+        assertEquals(userDto.getId(), userEntity.getId());
+        assertEquals(userDto.getUsername(), userEntity.getUsername());
+        assertEquals(userDto.getCollections().size(), userEntity.getCollections().size());
     }
 }
