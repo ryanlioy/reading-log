@@ -1,5 +1,6 @@
 package dev.ryanlioy.bookloger.controller;
 
+import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.dto.BookDto;
@@ -29,8 +30,8 @@ public class BookController {
      * @return {@link ResponseEntity<BookEntity>}
      */
     @PostMapping("/add")
-    public ResponseEntity<BookDto> addBook(@RequestBody BookDto bookDto) {
-        return new ResponseEntity<>(bookService.createBook(bookDto), HttpStatus.CREATED);
+    public ResponseEntity<EnvelopeDto<BookDto>> addBook(@RequestBody BookDto bookDto) {
+        return new ResponseEntity<>(new EnvelopeDto<>(bookService.createBook(bookDto)), HttpStatus.CREATED);
     }
 
     /**
@@ -39,7 +40,7 @@ public class BookController {
      * @return a book and 200 if found, otherwise 404 and no response body
      */
     @GetMapping("/{id}")
-    public ResponseEntity<BookDto> getBook(@PathVariable Long id) {
+    public ResponseEntity<EnvelopeDto<BookDto>> getBook(@PathVariable Long id) {
         Optional<BookEntity> optional = bookService.getBookById(id);
         BookDto bookDto = null;
         HttpStatus status = HttpStatus.NO_CONTENT;
@@ -48,7 +49,7 @@ public class BookController {
             status = HttpStatus.OK;
         }
 
-        return new ResponseEntity<>(bookDto, status);
+        return new ResponseEntity<>(new EnvelopeDto<>(bookDto), status);
     }
 
     /**
@@ -56,8 +57,8 @@ public class BookController {
      * @return a {@link List} of all books
      */
     @GetMapping("/all")
-    public ResponseEntity<List<BookDto>> getAllBooks() {
-        return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
+    public ResponseEntity<EnvelopeDto<List<BookDto>>> getAllBooks() {
+        return new ResponseEntity<>(new EnvelopeDto<>(bookService.getAllBooks()), HttpStatus.OK);
     }
 
     /**
@@ -66,7 +67,7 @@ public class BookController {
      * @return 200 with no response body
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<BookDto> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<EnvelopeDto<BookDto>> deleteBook(@PathVariable Long id) {
         bookService.deleteBookById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

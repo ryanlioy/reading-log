@@ -3,6 +3,7 @@ package dev.ryanlioy.bookloger.test.controller;
 import dev.ryanlioy.bookloger.controller.CollectionController;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
+import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.service.CollectionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,35 +35,35 @@ public class CollectionControllerTest {
     public void create_returnDtosAnd200() {
         when(collectionService.create(any())).thenReturn(new CollectionDto(1L));
         CreateCollectionDto resource = new CreateCollectionDto(1L);
-        ResponseEntity<CollectionDto> response = collectionItemController.create(resource);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.create(resource);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(1L, response.getBody().getId());
+        assertEquals(1L, response.getBody().getContent().getId());
     }
 
     @Test
     public void findAll_whenItemsDontExist_returnEmptyListAnd200() {
         when(collectionService.findAll()).thenReturn(List.of());
-        ResponseEntity<List<CollectionDto>> response = collectionItemController.getAllCollectionItems();
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getAllCollectionItems();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(0, response.getBody().size());
+        assertEquals(0, response.getBody().getContent().size());
     }
 
     @Test
     public void findAll_whenItemsExist_returnListAnd200() {
         when(collectionService.findAll()).thenReturn(List.of(new  CollectionDto(1L)));
-        ResponseEntity<List<CollectionDto>> response = collectionItemController.getAllCollectionItems();
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getAllCollectionItems();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertFalse(response.getBody().isEmpty());
+        assertFalse(response.getBody().getContent().isEmpty());
     }
 
     @Test
     public void createCurrentlyReading_whenEntityExists_returnResourceAnd200() {
         when(collectionService.create(any())).thenReturn(new CollectionDto(1L));
 
-        ResponseEntity<CollectionDto> response = collectionItemController.create(new CreateCollectionDto(1L));
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.create(new CreateCollectionDto(1L));
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
@@ -70,23 +71,22 @@ public class CollectionControllerTest {
     public void getCollectionItemsByUserId_whenEntitiesExist_returnNonEmptyList() {
         CollectionDto dto = new CollectionDto(1L);
         when(collectionService.findAllByUserId(any())).thenReturn(List.of(dto));
-        ResponseEntity<List<CollectionDto>> response = collectionItemController.getCollectionItemsByUserId(1L);
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getCollectionItemsByUserId(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dto, response.getBody().getFirst());
+        assertEquals(dto, response.getBody().getContent().getFirst());
     }
 
     @Test
     public void getCollectionItemsByUserId_whenNoEntitiesExist_returnEmptyList() {
         when(collectionService.findAllByUserId(any())).thenReturn(List.of());
-        ResponseEntity<List<CollectionDto>> response = collectionItemController.getCollectionItemsByUserId(1L);
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getCollectionItemsByUserId(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(0, response.getBody().size());
+        assertEquals(0, response.getBody().getContent().size());
     }
 
     @Test
     public void deleteById() {
         collectionItemController.deleteById(1L);
-
         verify(collectionService, times(1)).deleteById(any());
     }
 }

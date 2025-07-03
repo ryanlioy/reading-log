@@ -1,6 +1,7 @@
 package dev.ryanlioy.bookloger.test.controller;
 
 import dev.ryanlioy.bookloger.controller.BookController;
+import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.dto.BookDto;
@@ -41,22 +42,22 @@ public class BookControllerTest {
     public void addBook() {
         BookDto bookDto = new BookDto();
         when(bookService.createBook(any())).thenReturn(bookDto);
-        ResponseEntity<BookDto> response = bookController.addBook(bookDto);
+        ResponseEntity<EnvelopeDto<BookDto>> response = bookController.addBook(bookDto);
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertEquals(bookDto, response.getBody());
+        Assertions.assertEquals(bookDto, response.getBody().getContent());
     }
 
     @Test
     public void getBookById_bookFound() {
         when(bookService.getBookById(any())).thenReturn(Optional.of(new BookEntity()));
-        ResponseEntity<BookDto> response = bookController.getBook(1L);
+        ResponseEntity<EnvelopeDto<BookDto>> response = bookController.getBook(1L);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void getBookById_bookNotFound() {
         when(bookService.getBookById(any())).thenReturn(Optional.empty());
-        ResponseEntity<BookDto> response = bookController.getBook(1L);
+        ResponseEntity<EnvelopeDto<BookDto>> response = bookController.getBook(1L);
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
@@ -64,16 +65,16 @@ public class BookControllerTest {
     public void getAllBooks_booksFound() {
         List<BookDto> books = List.of(new BookDto());
         when(bookService.getAllBooks()).thenReturn(books);
-        ResponseEntity<List<BookDto>> response = bookController.getAllBooks();
+        ResponseEntity<EnvelopeDto<List<BookDto>>> response = bookController.getAllBooks();
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void getAllBooks_noBooksFound() {
         when(bookService.getAllBooks()).thenReturn(new ArrayList<>());
-        ResponseEntity<List<BookDto>> response = bookController.getAllBooks();
+        ResponseEntity<EnvelopeDto<List<BookDto>>> response = bookController.getAllBooks();
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertTrue(response.getBody().isEmpty());
+        Assertions.assertTrue(response.getBody().getContent().isEmpty());
     }
 
     @Test
