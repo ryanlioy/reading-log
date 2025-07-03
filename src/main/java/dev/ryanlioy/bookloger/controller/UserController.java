@@ -1,5 +1,6 @@
 package dev.ryanlioy.bookloger.controller;
 
+import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -17,24 +18,24 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<EnvelopeDto<UserDto>> addUser(@RequestBody UserDto userDto) {
         UserDto resource = userService.addUser(userDto);
 
-        return new ResponseEntity<>(resource, HttpStatus.CREATED);
+        return new ResponseEntity<>(new EnvelopeDto<>(resource), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+    public ResponseEntity<EnvelopeDto<UserDto>> getUser(@PathVariable Long id) {
         UserDto user = userService.getUserById(id);
         HttpStatus status = HttpStatus.OK;
         if (user == null) {
             status = HttpStatus.NO_CONTENT;
         }
-        return new ResponseEntity<>(user,  status);
+        return new ResponseEntity<>(new EnvelopeDto<>(user),  status);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserDto> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<EnvelopeDto<UserDto>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

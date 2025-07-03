@@ -2,6 +2,7 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
+import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.service.CollectionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +21,23 @@ public class CollectionController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CollectionDto>> getCollectionItemsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<EnvelopeDto<List<CollectionDto>>> getCollectionItemsByUserId(@PathVariable Long userId) {
         List<CollectionDto> dtos = collectionService.findAllByUserId(userId);
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
+        return new ResponseEntity<>(new EnvelopeDto<>(dtos), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<CollectionDto> create(@RequestBody CreateCollectionDto resource) {
-        return new ResponseEntity<>(collectionService.create(resource),  HttpStatus.CREATED) ;
+    public ResponseEntity<EnvelopeDto<CollectionDto>> create(@RequestBody CreateCollectionDto resource) {
+        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.create(resource)),  HttpStatus.CREATED) ;
     }
 
     @GetMapping
-    public ResponseEntity<List<CollectionDto>> getAllCollectionItems() {
-        return new ResponseEntity<>(collectionService.findAll(), HttpStatus.OK);
+    public ResponseEntity<EnvelopeDto<List<CollectionDto>>> getAllCollectionItems() {
+        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.findAll()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CollectionDto> deleteById(@PathVariable Long id){
+    public ResponseEntity<EnvelopeDto<CollectionDto>> deleteById(@PathVariable Long id){
         collectionService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
