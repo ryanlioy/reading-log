@@ -3,6 +3,7 @@ package dev.ryanlioy.bookloger.test.controller;
 import dev.ryanlioy.bookloger.controller.CollectionController;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
+import dev.ryanlioy.bookloger.dto.ModifyCollectionDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.service.CollectionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,7 @@ public class CollectionControllerTest {
 
     @Test
     public void create_returnDtosAnd200() {
-        when(collectionService.create(any())).thenReturn(new CollectionDto(1L));
+        when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
         CreateCollectionDto resource = new CreateCollectionDto(1L);
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.create(resource);
 
@@ -64,7 +65,7 @@ public class CollectionControllerTest {
 
     @Test
     public void createCurrentlyReading_whenEntityExists_returnResourceAnd200() {
-        when(collectionService.create(any())).thenReturn(new CollectionDto(1L));
+        when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
 
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.create(new CreateCollectionDto(1L));
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -85,6 +86,16 @@ public class CollectionControllerTest {
         ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getCollectionItemsByUserId(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(0, response.getBody().getContent().size());
+    }
+
+    @Test
+    public void addBooksToCollection_addBooksToCollection_return200() {
+        CollectionDto dto = new CollectionDto(1L);
+        when(collectionService.addBooksToCollection(any(ModifyCollectionDto.class))).thenReturn(dto);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.addBooksToCollection(new ModifyCollectionDto());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dto, response.getBody().getContent());
+
     }
 
     @Test

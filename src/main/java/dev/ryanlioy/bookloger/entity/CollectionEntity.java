@@ -13,6 +13,11 @@ import java.util.List;
 @Entity
 @Data
 public class CollectionEntity {
+    public CollectionEntity() {}
+    public CollectionEntity(Long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
