@@ -40,7 +40,7 @@ public class CollectionService {
         return dtos;
     }
 
-    public CollectionDto save(CreateCollectionDto resource) { // TODO combine the two save methods
+    public CollectionDto save(CreateCollectionDto resource) {
         List<BookDto> books = bookService.getAllBooksById(resource.getBookIds());
         return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.createDtoToEntity(resource, books)));
     }
@@ -61,7 +61,6 @@ public class CollectionService {
         if (dto.getBookIds() == null || dto.getBookIds().isEmpty()) {
             throw new RuntimeException("No books ids were given, nothing to add");
         }
-        // TODO enforce using only add or replace in json patch
         CollectionDto targetDto = findById(dto.getCollectionId());
         if (targetDto == null) { // TODO more proper error handling
             throw new RuntimeException(String.format("Collection with id %s not found", dto.getCollectionId()));
