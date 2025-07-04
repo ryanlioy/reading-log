@@ -42,10 +42,10 @@ public class UserService {
 
         UserEntity savedEntity = userRepository.save(entity);
         // create empty collections for favorites, currently reading, finished, and read list
-        collectionService.create(new CreateCollectionDto(savedEntity.getId(), "Favorites", true));
-        collectionService.create(new CreateCollectionDto(savedEntity.getId(), "Currently Reading", true));
-        collectionService.create(new CreateCollectionDto(savedEntity.getId(), "Finished", true));
-        collectionService.create(new CreateCollectionDto(savedEntity.getId(), "Read List", true));
+        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Favorites", true));
+        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Currently Reading", true));
+        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Finished", true));
+        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Read List", true));
 
         return getUserById(savedEntity.getId());
     }

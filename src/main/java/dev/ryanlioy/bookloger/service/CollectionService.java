@@ -3,6 +3,7 @@ package dev.ryanlioy.bookloger.service;
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
+import dev.ryanlioy.bookloger.dto.ModifyCollectionDto;
 import dev.ryanlioy.bookloger.entity.CollectionEntity;
 import dev.ryanlioy.bookloger.mapper.CollectionMapper;
 import dev.ryanlioy.bookloger.repository.CollectionRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class CollectionService {
@@ -38,17 +40,36 @@ public class CollectionService {
         return dtos;
     }
 
-    public CollectionDto create(CreateCollectionDto resource) {
+    public CollectionDto save(CreateCollectionDto resource) {
         List<BookDto> books = bookService.getAllBooksById(resource.getBookIds());
         return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.createDtoToEntity(resource, books)));
     }
 
+    public CollectionDto save(CollectionDto dto) {
+        return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.dtoToEntity(dto)));
+    }
+
     public List<CollectionDto> findAll() {
         List<CollectionDto> currentlyReadingDtos = new ArrayList<>();
-        collectionRepository.findAll().forEach(entity ->
-                currentlyReadingDtos.add(collectionMapper.entityToDto(entity))
+        collectionRepository.findAll().forEach(
+                entity -> currentlyReadingDtos.add(collectionMapper.entityToDto(entity))
         );
         return currentlyReadingDtos;
+    }
+
+    public CollectionDto addBooksToCollection(ModifyCollectionDto dto) {
+        if (dto.getBookIds() == null || dto.getBookIds().isEmpty()) {
+            throw new RuntimeException("No books ids were given, nothing to add");
+        }
+        CollectionDto targetDto = findById(dto.getCollectionId());
+        if (targetDto == null) { // TODO more proper error handling
+            throw new RuntimeException(String.format("Collection with id %s not found", dto.getCollectionId()));
+        }
+
+        List<BookDto> books = bookService.getAllBooksById(dto.getBookIds());
+        List<BookDto> newBooks = Stream.concat(books.stream(), targetDto.getBooks().stream()).toList();
+        targetDto.setBooks(newBooks);
+        return save(targetDto);
     }
 
     public void deleteById(Long id) {

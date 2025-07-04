@@ -2,6 +2,7 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
+import dev.ryanlioy.bookloger.dto.ModifyCollectionDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.service.CollectionService;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,12 @@ public class CollectionController {
 
     @PostMapping
     public ResponseEntity<EnvelopeDto<CollectionDto>> create(@RequestBody CreateCollectionDto resource) {
-        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.create(resource)),  HttpStatus.CREATED) ;
+        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.save(resource)),  HttpStatus.CREATED);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<EnvelopeDto<CollectionDto>> addBooksToCollection(@RequestBody ModifyCollectionDto dto) {
+        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.addBooksToCollection(dto)),  HttpStatus.OK);
     }
 
     @GetMapping
