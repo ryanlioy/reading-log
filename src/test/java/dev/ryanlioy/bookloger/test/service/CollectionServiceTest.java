@@ -153,9 +153,24 @@ public class CollectionServiceTest {
     }
 
     @Test
-    public void deleteById_deleteEntity() {
+    public void deleteById_notDefaultCollection_deleteEntity() {
+        when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
+        CollectionDto dto = new CollectionDto();
+        dto.setIsDefaultCollection(false);
+        when(collectionMapper.entityToDto(any())).thenReturn(dto);
         collectionService.deleteById(1L);
 
         verify(collectionRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void deleteById_defaultCollection_deleteEntity_throwException() { // TODO update when returning errors
+        when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
+        CollectionDto dto = new CollectionDto();
+        dto.setIsDefaultCollection(true);
+        when(collectionMapper.entityToDto(any())).thenReturn(dto);
+
+        assertThrows(RuntimeException.class, () -> collectionService.deleteById(1L));
+        verify(collectionRepository, times(0)).deleteById(1L);
     }
 }

@@ -77,6 +77,10 @@ public class CollectionService {
     }
 
     public void deleteById(Long id) {
+        CollectionDto dto = findById(id);
+        if (dto.getIsDefaultCollection()) { // TODO proper error handling
+            throw new RuntimeException(String.format("Collection with id %s is a default collection and cannot be deleted", dto.getId()));
+        }
         collectionRepository.deleteById(id);
     }
 }
