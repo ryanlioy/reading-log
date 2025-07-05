@@ -1,9 +1,10 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.dto.CollectionDto;
+import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
-import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.service.CollectionService;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,9 +72,19 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserById_deleteUser() {
+    public void deleteUser_deleteUser() {
         userRepository.deleteById(1L);
 
         verify(userRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void deleteUser_deleteAllCollections() {
+        when(userRepository.findById(any())).thenReturn(Optional.of(new UserEntity()));
+        when(userMapper.entityToDto(any())).thenReturn(new UserDto());
+        when(collectionService.findAllByUserId(any())).thenReturn(List.of(new CollectionDto(1L)));
+
+        userService.deleteUser(1L);
+        verify(collectionService, times(1)).deleteAllById(any());
     }
 }
