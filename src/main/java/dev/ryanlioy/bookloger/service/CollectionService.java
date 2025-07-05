@@ -72,6 +72,10 @@ public class CollectionService {
         return save(targetDto);
     }
 
+    public void deleteAllById(List<CollectionDto> collections) {
+        collectionRepository.deleteAllById(collections.stream().map(CollectionDto::getId).toList());
+    }
+
     public void deleteById(Long id) {
         collectionRepository.deleteById(id);
     }

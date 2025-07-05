@@ -51,6 +51,7 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        collectionService.deleteAllById(getUserById(id).getCollections().values().stream().toList());
         userRepository.deleteById(id);
     }
 }

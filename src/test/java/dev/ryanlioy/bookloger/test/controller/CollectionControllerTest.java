@@ -28,18 +28,18 @@ public class CollectionControllerTest {
     @Mock
     private CollectionService collectionService;
 
-    private CollectionController collectionItemController;
+    private CollectionController collectionController;
 
     @BeforeEach
     public void setUp() {
-        collectionItemController = new CollectionController(collectionService);
+        collectionController = new CollectionController(collectionService);
     }
 
     @Test
     public void create_returnDtosAnd200() {
         when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
         CreateCollectionDto resource = new CreateCollectionDto(1L);
-        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.create(resource);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.create(resource);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(1L, response.getBody().getContent().getId());
@@ -48,7 +48,7 @@ public class CollectionControllerTest {
     @Test
     public void findAll_whenItemsDontExist_returnEmptyListAnd200() {
         when(collectionService.findAll()).thenReturn(List.of());
-        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getAllCollectionItems();
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionController.getAllCollectionItems();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(0, response.getBody().getContent().size());
@@ -57,7 +57,7 @@ public class CollectionControllerTest {
     @Test
     public void findAll_whenItemsExist_returnListAnd200() {
         when(collectionService.findAll()).thenReturn(List.of(new  CollectionDto(1L)));
-        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getAllCollectionItems();
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionController.getAllCollectionItems();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertFalse(response.getBody().getContent().isEmpty());
@@ -67,7 +67,7 @@ public class CollectionControllerTest {
     public void createCurrentlyReading_whenEntityExists_returnResourceAnd200() {
         when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
 
-        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.create(new CreateCollectionDto(1L));
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.create(new CreateCollectionDto(1L));
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
@@ -75,7 +75,7 @@ public class CollectionControllerTest {
     public void getCollectionItemsByUserId_whenEntitiesExist_returnNonEmptyList() {
         CollectionDto dto = new CollectionDto(1L);
         when(collectionService.findAllByUserId(any())).thenReturn(List.of(dto));
-        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getCollectionItemsByUserId(1L);
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionController.getCollectionItemsByUserId(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dto, response.getBody().getContent().getFirst());
     }
@@ -83,7 +83,7 @@ public class CollectionControllerTest {
     @Test
     public void getCollectionItemsByUserId_whenNoEntitiesExist_returnEmptyList() {
         when(collectionService.findAllByUserId(any())).thenReturn(List.of());
-        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionItemController.getCollectionItemsByUserId(1L);
+        ResponseEntity<EnvelopeDto<List<CollectionDto>>> response = collectionController.getCollectionItemsByUserId(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(0, response.getBody().getContent().size());
     }
@@ -92,7 +92,7 @@ public class CollectionControllerTest {
     public void addBooksToCollection_addBooksToCollection_return200() {
         CollectionDto dto = new CollectionDto(1L);
         when(collectionService.addBooksToCollection(any(ModifyCollectionDto.class))).thenReturn(dto);
-        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionItemController.addBooksToCollection(new ModifyCollectionDto());
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.addBooksToCollection(new ModifyCollectionDto());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dto, response.getBody().getContent());
 
@@ -100,7 +100,7 @@ public class CollectionControllerTest {
 
     @Test
     public void deleteById() {
-        collectionItemController.deleteById(1L);
+        collectionController.deleteById(1L);
         verify(collectionService, times(1)).deleteById(any());
     }
 }

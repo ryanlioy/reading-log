@@ -146,6 +146,13 @@ public class CollectionServiceTest {
     }
 
     @Test
+    public void deleteAllById_deletesAllCollections() {
+        collectionService.deleteAllById(List.of(new CollectionDto(1L)));
+
+        verify(collectionRepository, times(1)).deleteAllById(List.of(1L));
+    }
+
+    @Test
     public void deleteById_deleteEntity() {
         collectionService.deleteById(1L);
 
