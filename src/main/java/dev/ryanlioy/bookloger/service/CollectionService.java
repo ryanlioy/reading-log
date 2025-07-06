@@ -96,7 +96,22 @@ public class CollectionService {
         }
 
         List<BookDto> books = bookService.getAllBooksById(dto.getBookIds());
-        List<BookDto> newBooks = Stream.concat(books.stream(), targetDto.getBooks().stream()).toList();
+        List<BookDto> newBooks = Stream.concat(books.stream(), targetDto.getBooks().stream()).toList(); // because the repository returns an immutable list!
+        targetDto.setBooks(newBooks);
+        return save(targetDto);
+    }
+
+    public CollectionDto deleteBooksFromCollection(ModifyCollectionDto dto) {
+        if (dto.getBookIds() == null || dto.getBookIds().isEmpty()) {
+            throw new RuntimeException("No books ids were given, nothing to delete");
+        }
+        CollectionDto targetDto = findById(dto.getCollectionId());
+        if (targetDto == null) { // TODO more proper error handling
+            throw new RuntimeException(String.format("Collection with id %s not found", dto.getCollectionId()));
+        }
+        List<BookDto> books = bookService.getAllBooksById(dto.getBookIds());
+        List<BookDto> newBooks = new ArrayList<>(books); // because the repository returns an immutable list!
+        newBooks.removeAll(books);
         targetDto.setBooks(newBooks);
         return save(targetDto);
     }

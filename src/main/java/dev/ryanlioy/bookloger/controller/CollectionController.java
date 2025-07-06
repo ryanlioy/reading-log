@@ -57,6 +57,11 @@ public class CollectionController {
         return new ResponseEntity<>(new EnvelopeDto<>(collectionService.addBooksToCollection(dto)),  HttpStatus.OK);
     }
 
+    @PostMapping("/remove")
+    public ResponseEntity<EnvelopeDto<CollectionDto>> removeBooksFromCollection(@RequestBody ModifyCollectionDto dto) {
+        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.deleteBooksFromCollection(dto)), HttpStatus.OK);
+    }
+
     /**
      * Gets all collections
      * @return a {@link List} of all collections
