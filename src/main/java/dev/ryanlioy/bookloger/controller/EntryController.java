@@ -55,6 +55,6 @@ public class EntryController {
     @DeleteMapping("/{entryId}")
     public ResponseEntity<EnvelopeDto<EntryDto>> deleteEntryById(@PathVariable Long entryId) {
         entryService.deleteEntryById(entryId);
-        return new  ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
