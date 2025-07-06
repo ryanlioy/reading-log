@@ -24,6 +24,11 @@ public class UserService {
         this.collectionService = collectionService;
     }
 
+    /**
+     * Find a user by ID
+     * @param id the ID of the user
+     * @return the user, null if not found
+     */
     public UserDto getUserById(Long id) {
         Optional<UserEntity> userEntity = userRepository.findById(id);
         UserDto userDto = null;
@@ -37,6 +42,11 @@ public class UserService {
         return userDto;
     }
 
+    /**
+     * Creates a user
+     * @param userDto the user to create
+     * @return the created user
+     */
     public UserDto addUser(UserDto userDto) {
         UserEntity entity = userMapper.dtoToEntity(userDto);
 
@@ -50,6 +60,10 @@ public class UserService {
         return getUserById(savedEntity.getId());
     }
 
+    /**
+     * Deletes a user
+     * @param id the ID of the user to delete
+     */
     public void deleteUser(Long id) {
         collectionService.deleteAllById(getUserById(id).getCollections().values().stream().toList());
         userRepository.deleteById(id);

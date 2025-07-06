@@ -20,10 +20,21 @@ public class EntryService {
         this.entryMapper = entryMapper;
     }
 
+    /**
+     * Create an entry
+     * @param entryDto the entry to create
+     * @return the created enty
+     */
     public EntryDto createEntry(EntryDto entryDto) {
         return entryMapper.entityToResource(entryRepository.save(entryMapper.resourceToEntity(entryDto)));
     }
 
+    /**
+     * Get entries by book ID and user ID
+     * @param bookId the book ID
+     * @param userId the user ID
+     * @return {@link List} of entires
+     */
     public List<EntryDto> getEntryByBookIdAndUserId(Long bookId, Long userId) {
         List<EntryEntity> entities = entryRepository.findAllByUserIdAndBookId(bookId, userId);
 
@@ -35,10 +46,19 @@ public class EntryService {
         return resources;
     }
 
+    /**
+     * Get an entry by ID
+     * @param entryId the ID of the entry
+     * @return {@link Optional} that may contain the list
+     */
     public Optional<EntryEntity> getEntryById(Long entryId) {
         return entryRepository.findById(entryId);
     }
 
+    /**
+     * Delete an entry
+     * @param entryId ID of entry to delete
+     */
     public void deleteEntryById(Long entryId) {
         entryRepository.deleteById(entryId);
     }

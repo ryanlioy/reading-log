@@ -22,6 +22,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Create a user
+     * @param userDto the request
+     * @return the created user
+     */
     @PostMapping("/add")
     public ResponseEntity<EnvelopeDto<UserDto>> addUser(@RequestBody UserDto userDto) {
         UserDto resource = userService.addUser(userDto);
@@ -29,6 +34,11 @@ public class UserController {
         return new ResponseEntity<>(new EnvelopeDto<>(resource), HttpStatus.CREATED);
     }
 
+    /**
+     * Get a user by ID
+     * @param id the ID of the user
+     * @return body with the found user, null if not found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<EnvelopeDto<UserDto>> getUser(@PathVariable Long id) {
         UserDto user = userService.getUserById(id);
@@ -39,6 +49,11 @@ public class UserController {
         return new ResponseEntity<>(new EnvelopeDto<>(user),  status);
     }
 
+    /**
+     * Delete a user by ID
+     * @param id the ID to delete
+     * @return 204 with no body
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<EnvelopeDto<UserDto>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
