@@ -25,6 +25,11 @@ public class CollectionService {
         this.bookService = bookService;
     }
 
+    /**
+     * Find a collection by ID
+     * @param id ID of the collection to find
+     * @return the matching collection, null if not found
+     */
     public CollectionDto findById(Long id) {
         CollectionEntity entity = collectionRepository.findById(id).orElse(null);
         if (entity == null) {
@@ -33,6 +38,11 @@ public class CollectionService {
         return collectionMapper.entityToDto(entity);
     }
 
+    /**
+     * Find all collections for a user
+     * @param userId the user ID
+     * @return {@link List} of collections for the user
+     */
     public List<CollectionDto> findAllByUserId(Long userId) {
         List<CollectionEntity> entities = collectionRepository.findAllByUserId(userId);
         List<CollectionDto> dtos = new ArrayList<>();
@@ -40,15 +50,29 @@ public class CollectionService {
         return dtos;
     }
 
+    /**
+     * Create a collection
+     * @param resource the collection to create
+     * @return the created collection
+     */
     public CollectionDto save(CreateCollectionDto resource) {
         List<BookDto> books = bookService.getAllBooksById(resource.getBookIds());
         return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.createDtoToEntity(resource, books)));
     }
 
+    /**
+     * Create a collection, differs from the other save as this one accepts a {@link CollectionDto}
+     * @param dto the {@link CollectionDto} to create
+     * @return the created collection
+     */
     public CollectionDto save(CollectionDto dto) {
         return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.dtoToEntity(dto)));
     }
 
+    /**
+     * Find all collections
+     * @return {@link List} of all collections
+     */
     public List<CollectionDto> findAll() {
         List<CollectionDto> currentlyReadingDtos = new ArrayList<>();
         collectionRepository.findAll().forEach(
@@ -57,6 +81,11 @@ public class CollectionService {
         return currentlyReadingDtos;
     }
 
+    /**
+     * Add a book to a collection
+     * @param dto contains the book ID and collection ID
+     * @return the collection with the newly added book
+     */
     public CollectionDto addBooksToCollection(ModifyCollectionDto dto) {
         if (dto.getBookIds() == null || dto.getBookIds().isEmpty()) {
             throw new RuntimeException("No books ids were given, nothing to add");
@@ -72,10 +101,18 @@ public class CollectionService {
         return save(targetDto);
     }
 
+    /**
+     * Deletes collections from a list of IDs; mainly used when deleting a user.
+     * @param collections {@link List} of collection IDs
+     */
     public void deleteAllById(List<CollectionDto> collections) {
         collectionRepository.deleteAllById(collections.stream().map(CollectionDto::getId).toList());
     }
 
+    /**
+     * Delete a collection by ID
+     * @param id the ID to delete
+     */
     public void deleteById(Long id) {
         CollectionDto dto = findById(id);
         if (dto.getIsDefaultCollection()) { // TODO proper error handling

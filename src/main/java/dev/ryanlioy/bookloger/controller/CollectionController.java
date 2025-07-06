@@ -26,27 +26,51 @@ public class CollectionController {
         this.collectionService = collectionService;
     }
 
+    /**
+     * Gets all collections by user ID
+     * @param userId user ID to find collection for
+     * @return {@link List} of {@link CollectionDto}
+     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<EnvelopeDto<List<CollectionDto>>> getCollectionItemsByUserId(@PathVariable Long userId) {
         List<CollectionDto> dtos = collectionService.findAllByUserId(userId);
         return new ResponseEntity<>(new EnvelopeDto<>(dtos), HttpStatus.OK);
     }
 
+    /**
+     * Creates a {@link CollectionDto}
+     * @param resource the request
+     * @return the created {@link CollectionDto}
+     */
     @PostMapping
     public ResponseEntity<EnvelopeDto<CollectionDto>> create(@RequestBody CreateCollectionDto resource) {
         return new ResponseEntity<>(new EnvelopeDto<>(collectionService.save(resource)),  HttpStatus.CREATED);
     }
 
+    /**
+     * Adds a book to a collection
+     * @param dto request containing the book ID and collection ID
+     * @return the collection with the added book
+     */
     @PostMapping("/add")
     public ResponseEntity<EnvelopeDto<CollectionDto>> addBooksToCollection(@RequestBody ModifyCollectionDto dto) {
         return new ResponseEntity<>(new EnvelopeDto<>(collectionService.addBooksToCollection(dto)),  HttpStatus.OK);
     }
 
+    /**
+     * Gets all collections
+     * @return a {@link List} of all collections
+     */
     @GetMapping
     public ResponseEntity<EnvelopeDto<List<CollectionDto>>> getAllCollectionItems() {
         return new ResponseEntity<>(new EnvelopeDto<>(collectionService.findAll()), HttpStatus.OK);
     }
 
+    /**
+     * Delete a collection
+     * @param id the collection ID
+     * @return 204 with no body
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<EnvelopeDto<CollectionDto>> deleteById(@PathVariable Long id){
         collectionService.deleteById(id);

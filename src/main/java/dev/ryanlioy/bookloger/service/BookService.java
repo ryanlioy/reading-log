@@ -20,10 +20,20 @@ public class BookService {
         this.bookMapper = bookMapper;
     }
 
+    /**
+     * Get a book by ID
+     * @param id the book ID
+     * @return an optional containing the specified book
+     */
     public Optional<BookEntity> getBookById(Long id) {
         return bookRepository.findById(id);
     }
 
+    /**
+     * Get all books by ID
+     * @param ids a {@link List} of book IDs
+     * @return the matching books
+     */
     public List<BookDto> getAllBooksById(List<Long> ids) {
         Iterable<BookEntity> entities = bookRepository.findAllById(ids);
         List<BookDto> books = new ArrayList<>();
@@ -31,11 +41,20 @@ public class BookService {
         return books;
     }
 
+    /**
+     * Create a book
+     * @param bookDto the book to create
+     * @return the created book
+     */
     public BookDto createBook(BookDto bookDto) {
         BookEntity bookEntity = bookMapper.resourceToEntity(bookDto);
         return bookMapper.entityToResource(bookRepository.save(bookEntity));
     }
 
+    /**
+     * Get all books
+     * @return {@link List} of all books
+     */
     public List<BookDto> getAllBooks() {
         Iterable<BookEntity> entities = bookRepository.findAll();
         List<BookDto> bookDtos = new ArrayList<>();
@@ -47,6 +66,10 @@ public class BookService {
         return bookDtos;
     }
 
+    /**
+     * Deletes a book
+     * @param id ID of book to delete
+     */
     public void deleteBookById(Long id) {
         bookRepository.deleteById(id);
     }

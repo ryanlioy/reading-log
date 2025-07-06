@@ -30,16 +30,32 @@ public class EntryController {
         this.entryMapper = entryMapper;
     }
 
+    /**
+     * Creates an entry
+     * @param entryDto the request
+     * @return the created entry
+     */
     @PostMapping
     public ResponseEntity<EnvelopeDto<EntryDto>> createEntry(@RequestBody EntryDto entryDto) {
         return new ResponseEntity<>(new EnvelopeDto<>(entryService.createEntry(entryDto)), HttpStatus.CREATED);
     }
 
+    /**
+     * Get an entry by user ID and book ID
+     * @param userId the user ID
+     * @param bookId the book ID
+     * @return {@link List} of the entries
+     */
     @GetMapping
     public ResponseEntity<EnvelopeDto<List<EntryDto>>> getEntriesByUserIdAndBookId(@RequestParam Long userId, @RequestParam Long bookId) {
         return new ResponseEntity<>(new EnvelopeDto<>(entryService.getEntryByBookIdAndUserId(bookId, userId)),  HttpStatus.OK);
     }
 
+    /**
+     * Get an entry by ID
+     * @param entryId the entry ID
+     * @return a body containing the specified ID, null if it does not exist
+     */
     @GetMapping("/{entryId}")
     public ResponseEntity<EnvelopeDto<EntryDto>> getEntryById(@PathVariable Long entryId) {
         Optional<EntryEntity> entryEntity = entryService.getEntryById(entryId);
@@ -52,6 +68,11 @@ public class EntryController {
         return new ResponseEntity<>(new EnvelopeDto<>(entryDto), status);
     }
 
+    /**
+     * Delete an entry by ID
+     * @param entryId he ID to delete
+     * @return 204 with no body
+     */
     @DeleteMapping("/{entryId}")
     public ResponseEntity<EnvelopeDto<EntryDto>> deleteEntryById(@PathVariable Long entryId) {
         entryService.deleteEntryById(entryId);
