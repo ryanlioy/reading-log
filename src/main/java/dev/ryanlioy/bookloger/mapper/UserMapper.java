@@ -18,6 +18,7 @@ public class UserMapper {
     public UserMapper(CollectionMapper collectionMapper) {
         this.collectionMapper = collectionMapper;
     }
+
     public UserEntity dtoToEntity(UserDto user) {
         UserEntity entity = new UserEntity();
 
@@ -34,15 +35,15 @@ public class UserMapper {
     }
 
     public UserDto entityToDto(UserEntity entity) {
-        UserDto resource = new UserDto();
+        UserDto dto = new UserDto();
 
-        resource.setId(entity.getId());
-        resource.setUsername(entity.getUsername());
+        dto.setId(entity.getId());
+        dto.setUsername(entity.getUsername());
 
         Map<String, CollectionDto> collections = new HashMap<>();
-        entity.getCollections().forEach(dto -> collections.put(dto.getTitle(), collectionMapper.entityToDto(dto)));
-        resource.setCollections(collections);
+        entity.getCollections().forEach(e -> collections.put(e.getTitle(), collectionMapper.entityToDto(e)));
+        dto.setCollections(collections);
 
-        return resource;
+        return dto;
     }
 }

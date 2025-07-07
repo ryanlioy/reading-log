@@ -26,7 +26,7 @@ public class EntryService {
      * @return the created enty
      */
     public EntryDto createEntry(EntryDto entryDto) {
-        return entryMapper.entityToResource(entryRepository.save(entryMapper.resourceToEntity(entryDto)));
+        return entryMapper.entityToDto(entryRepository.save(entryMapper.dtoToEntity(entryDto)));
     }
 
     /**
@@ -38,12 +38,12 @@ public class EntryService {
     public List<EntryDto> getEntryByBookIdAndUserId(Long bookId, Long userId) {
         List<EntryEntity> entities = entryRepository.findAllByUserIdAndBookId(bookId, userId);
 
-        List<EntryDto> resources = new ArrayList<>();
+        List<EntryDto> dtos = new ArrayList<>();
         for(EntryEntity entity : entities) {
-            resources.add(entryMapper.entityToResource(entity));
+            dtos.add(entryMapper.entityToDto(entity));
         }
 
-        return resources;
+        return dtos;
     }
 
     /**
@@ -53,7 +53,7 @@ public class EntryService {
      */
     public EntryDto getEntryById(Long entryId) {
         Optional<EntryEntity> optional = entryRepository.findById(entryId);
-        return optional.map(entryMapper::entityToResource).orElse(null);
+        return optional.map(entryMapper::entityToDto).orElse(null);
     }
 
     /**

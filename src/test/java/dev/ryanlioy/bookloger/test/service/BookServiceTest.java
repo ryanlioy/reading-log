@@ -45,7 +45,7 @@ public class BookServiceTest {
         BookEntity bookEntity = new BookEntity();
         bookEntity.setId(1L);
         when(bookRepository.findById((any()))).thenReturn(Optional.of(bookEntity));
-        when(bookMapper.entityToResource(bookEntity)).thenReturn(new BookDto());
+        when(bookMapper.entityToDto(bookEntity)).thenReturn(new BookDto());
         BookDto book = bookService.getBookById(1L);
 
         assertNotNull(book);
@@ -62,20 +62,20 @@ public class BookServiceTest {
     }
 
     @Test
-    public void createBook_whenBookCreated_returnResource() {
+    public void createBook_whenBookCreated_returnDto() {
         when(bookRepository.save(any())).thenReturn(new BookEntity());
         BookDto bookDto = new BookDto();
         bookDto.setId(1L);
-        when(bookMapper.entityToResource(any())).thenReturn(bookDto);
-        BookDto returnResource = bookService.createBook(new BookDto());
+        when(bookMapper.entityToDto(any())).thenReturn(bookDto);
+        BookDto returnDto = bookService.createBook(new BookDto());
 
-        assertNotNull(returnResource.getId());
+        assertNotNull(returnDto.getId());
     }
 
     @Test
     public void getAllBooks_whenBooksFound_returnNonEmptyList() {
         when(bookRepository.findAll()).thenReturn(List.of(new BookEntity()));
-        when(bookMapper.entityToResource(any())).thenReturn(new BookDto());
+        when(bookMapper.entityToDto(any())).thenReturn(new BookDto());
 
         List<BookDto> list = bookService.getAllBooks();
         assertFalse(list.isEmpty());
@@ -93,7 +93,7 @@ public class BookServiceTest {
     public void getAllBooksById_whenBooksFound_returnNonEmptyList() {
         when(bookRepository.findAllById(any())).thenReturn(List.of(new BookEntity()));
         BookDto bookDto = new BookDto();
-        when(bookMapper.entityToResource(any())).thenReturn(bookDto);
+        when(bookMapper.entityToDto(any())).thenReturn(bookDto);
         List<BookDto> response = bookService.getAllBooksById(new ArrayList<>());
         assertFalse(response.isEmpty());
         assertEquals(response.getFirst(), bookDto);

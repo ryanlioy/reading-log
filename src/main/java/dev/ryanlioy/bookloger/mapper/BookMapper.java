@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BookMapper {
-
-    public BookEntity resourceToEntity(BookDto bookDto) {
+    public BookEntity dtoToEntity(BookDto bookDto) {
         BookEntity bookEntity = new BookEntity();
 
         bookEntity.setId(bookDto.getId());
@@ -21,7 +20,7 @@ public class BookMapper {
         return bookEntity;
     }
 
-    public BookDto entityToResource(BookEntity bookEntity) {
+    public BookDto entityToDto(BookEntity bookEntity) {
         BookDto bookDto = new BookDto();
 
         bookDto.setId(bookEntity.getId());

@@ -52,12 +52,12 @@ public class CollectionService {
 
     /**
      * Create a collection
-     * @param resource the collection to create
+     * @param createCollectionDto the collection to create
      * @return the created collection
      */
-    public CollectionDto save(CreateCollectionDto resource) {
-        List<BookDto> books = bookService.getAllBooksById(resource.getBookIds());
-        return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.createDtoToEntity(resource, books)));
+    public CollectionDto save(CreateCollectionDto createCollectionDto) {
+        List<BookDto> books = bookService.getAllBooksById(createCollectionDto.getBookIds());
+        return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.createDtoToEntity(createCollectionDto, books)));
     }
 
     /**

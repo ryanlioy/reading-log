@@ -39,12 +39,12 @@ public class CollectionController {
 
     /**
      * Creates a {@link CollectionDto}
-     * @param resource the request
+     * @param createCollectionDto the request
      * @return the created {@link CollectionDto}
      */
     @PostMapping
-    public ResponseEntity<EnvelopeDto<CollectionDto>> create(@RequestBody CreateCollectionDto resource) {
-        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.save(resource)),  HttpStatus.CREATED);
+    public ResponseEntity<EnvelopeDto<CollectionDto>> create(@RequestBody CreateCollectionDto createCollectionDto) {
+        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.save(createCollectionDto)),  HttpStatus.CREATED);
     }
 
     /**

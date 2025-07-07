@@ -38,8 +38,8 @@ public class CollectionControllerTest {
     @Test
     public void create_returnDtosAnd200() {
         when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
-        CreateCollectionDto resource = new CreateCollectionDto(1L);
-        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.create(resource);
+        CreateCollectionDto dto = new CreateCollectionDto(1L);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.create(dto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(1L, response.getBody().getContent().getId());
@@ -64,7 +64,7 @@ public class CollectionControllerTest {
     }
 
     @Test
-    public void createCurrentlyReading_whenEntityExists_returnResourceAnd200() {
+    public void createCurrentlyReading_whenEntityExists_returnDtoAnd200() {
         when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
 
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.create(new CreateCollectionDto(1L));

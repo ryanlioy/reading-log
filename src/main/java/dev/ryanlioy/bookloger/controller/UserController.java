@@ -29,9 +29,9 @@ public class UserController {
      */
     @PostMapping("/add")
     public ResponseEntity<EnvelopeDto<UserDto>> addUser(@RequestBody UserDto userDto) {
-        UserDto resource = userService.addUser(userDto);
+        UserDto dto = userService.addUser(userDto);
 
-        return new ResponseEntity<>(new EnvelopeDto<>(resource), HttpStatus.CREATED);
+        return new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.CREATED);
     }
 
     /**

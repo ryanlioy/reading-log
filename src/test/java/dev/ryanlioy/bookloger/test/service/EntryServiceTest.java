@@ -38,20 +38,20 @@ public class EntryServiceTest {
     }
 
     @Test
-    public void createEntry_whenEntryCreated_returnResource() {
+    public void createEntry_whenEntryCreated_returnDto() {
         when(entryRepository.save(any())).thenReturn(new EntryEntity());
         EntryDto entryDto = new EntryDto(1L);
-        when(entryMapper.entityToResource(any())).thenReturn(entryDto);
-        EntryDto returnResource = entryService.createEntry(entryDto);
+        when(entryMapper.entityToDto(any())).thenReturn(entryDto);
+        EntryDto dto = entryService.createEntry(entryDto);
 
-        assertEquals(entryDto, returnResource);
+        assertEquals(entryDto, dto);
     }
 
     @Test
     public void getEntryById_whenEntryFound_returnDto() {
         EntryEntity entity = new EntryEntity(1L);
         when(entryRepository.findById(any())).thenReturn(Optional.of(entity));
-        when(entryMapper.entityToResource(any())).thenReturn(new EntryDto());
+        when(entryMapper.entityToDto(any())).thenReturn(new EntryDto());
 
         EntryDto dto = entryService.getEntryById(1L);
         assertNotNull(dto);
@@ -65,13 +65,13 @@ public class EntryServiceTest {
     }
 
     @Test
-    public void getAllEntriesByBookIdAndUserId_whenEntriesFound_returnResourceList() {
+    public void getAllEntriesByBookIdAndUserId_whenEntriesFound_returnDtoList() {
         when(entryRepository.findAllByUserIdAndBookId(any(), any())).thenReturn(List.of(new EntryEntity(1L, 3L, 4L), new EntryEntity(2L, 3L, 4L)));
-        List<EntryDto> resources = List.of(new EntryDto(1L, 3L, 4L), new EntryDto(1L, 3L, 4L));
-        when(entryMapper.entityToResource(any())).thenReturn(resources.get(0)).thenReturn(resources.get(1));
+        List<EntryDto> dtos = List.of(new EntryDto(1L, 3L, 4L), new EntryDto(1L, 3L, 4L));
+        when(entryMapper.entityToDto(any())).thenReturn(dtos.get(0)).thenReturn(dtos.get(1));
 
         List<EntryDto> returnEntries = entryService.getEntryByBookIdAndUserId(3L, 4L);
-        assertEquals(resources, returnEntries);
+        assertEquals(dtos, returnEntries);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class EntryServiceTest {
     }
 
     @Test
-    public void deleteEntryById_returnResource() {
+    public void deleteEntryById_returnDto() {
         entryService.deleteEntryById(1L);
 
         verify(entryRepository, times(1)).deleteById(1L);
