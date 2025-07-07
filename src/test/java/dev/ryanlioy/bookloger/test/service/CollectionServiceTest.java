@@ -23,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -141,8 +142,31 @@ public class CollectionServiceTest {
     }
 
     @Test
-    public void addBooksToCollection_noBookIds_throwException() {
+    public void removeBooksFromCollection_whenFound_removeBooksFromCollection() {
+        BookDto book = new BookDto(1L);
+        CollectionDto collection = new CollectionDto(1L);
+        collection.setBooks(new ArrayList<>(List.of(new BookDto(1L))));
+        when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
+        when(collectionMapper.entityToDto(any())).thenReturn(collection);
+        when(bookService.getAllBooksById(any())).thenReturn(List.of(book));
+
+        CollectionDto actual = collectionService.deleteBooksFromCollection(new  ModifyCollectionDto(1L, List.of(1L)));
+        assertTrue(actual.getBooks().isEmpty());
+    }
+
+    @Test
+    public void removeBooksFromCollection_whenNoBookIds_throwException() {
+        assertThrows(RuntimeException.class, () -> collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, new ArrayList<>())));
+    }
+
+    @Test
+    public void removeBooksFromCollection_noBookIds_throwException() {
         assertThrows(RuntimeException.class, () -> collectionService.addBooksToCollection(new ModifyCollectionDto()));
+    }
+
+    @Test
+    public void removeBooksFromCollection_collectionDoesNotExist_throwException() {
+        assertThrows(RuntimeException.class, () -> collectionService.addBooksToCollection(new ModifyCollectionDto(1L, new ArrayList<>())));
     }
 
     @Test

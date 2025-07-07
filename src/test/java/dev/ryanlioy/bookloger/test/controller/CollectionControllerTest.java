@@ -95,7 +95,15 @@ public class CollectionControllerTest {
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.addBooksToCollection(new ModifyCollectionDto());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dto, response.getBody().getContent());
+    }
 
+    @Test
+    public void removeBooksFromCollection_removeBooksFromCollection_return200() {
+        CollectionDto dto = new CollectionDto(1L);
+        when(collectionService.deleteBooksFromCollection(any())).thenReturn(dto);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.removeBooksFromCollection(new ModifyCollectionDto());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dto, response.getBody().getContent());
     }
 
     @Test
