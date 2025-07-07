@@ -1,11 +1,10 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.dto.EntryDto;
 import dev.ryanlioy.bookloger.entity.EntryEntity;
 import dev.ryanlioy.bookloger.mapper.EntryMapper;
 import dev.ryanlioy.bookloger.repository.EntryRepository;
-import dev.ryanlioy.bookloger.dto.EntryDto;
 import dev.ryanlioy.bookloger.service.EntryService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -41,24 +44,24 @@ public class EntryServiceTest {
         when(entryMapper.entityToResource(any())).thenReturn(entryDto);
         EntryDto returnResource = entryService.createEntry(entryDto);
 
-        Assertions.assertEquals(entryDto, returnResource);
+        assertEquals(entryDto, returnResource);
     }
 
     @Test
-    public void getEntryById_whenEntryFound_returnNonEmptyOptional() {
+    public void getEntryById_whenEntryFound_returnDto() {
         EntryEntity entity = new EntryEntity(1L);
         when(entryRepository.findById(any())).thenReturn(Optional.of(entity));
+        when(entryMapper.entityToResource(any())).thenReturn(new EntryDto());
 
-        Optional<EntryEntity> returnResource = entryService.getEntryById(1L);
-        Assertions.assertTrue(returnResource.isPresent());
-        Assertions.assertEquals(entity, returnResource.get());
+        EntryDto dto = entryService.getEntryById(1L);
+        assertNotNull(dto);
     }
 
     @Test
     public void getEntryById_whenEntryNotFound_returnEmptyOptional() {
         when(entryRepository.findById(any())).thenReturn(Optional.empty());
-        Optional<EntryEntity> returnResource = entryService.getEntryById(1L);
-        Assertions.assertFalse(returnResource.isPresent());
+        EntryDto dto = entryService.getEntryById(1L);
+        assertNull(dto);
     }
 
     @Test
@@ -68,7 +71,7 @@ public class EntryServiceTest {
         when(entryMapper.entityToResource(any())).thenReturn(resources.get(0)).thenReturn(resources.get(1));
 
         List<EntryDto> returnEntries = entryService.getEntryByBookIdAndUserId(3L, 4L);
-        Assertions.assertEquals(resources, returnEntries);
+        assertEquals(resources, returnEntries);
     }
 
     @Test
@@ -76,7 +79,7 @@ public class EntryServiceTest {
         when(entryRepository.findAllByUserIdAndBookId(any(), any())).thenReturn(List.of());
 
         List<EntryDto> returnEntries = entryService.getEntryByBookIdAndUserId(3L, 4L);
-        Assertions.assertTrue(returnEntries.isEmpty());
+        assertTrue(returnEntries.isEmpty());
     }
 
     @Test
