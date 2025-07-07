@@ -48,13 +48,13 @@ public class CollectionServiceTest {
     }
 
     @Test
-    public void findById_whenFound_returnResource() {
+    public void findById_whenFound_returnDto() {
         when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
-        CollectionDto resource = new CollectionDto();
-        when(collectionMapper.entityToDto(any())).thenReturn(resource);
+        CollectionDto dto = new CollectionDto();
+        when(collectionMapper.entityToDto(any())).thenReturn(dto);
         CollectionDto response = collectionService.findById(1L);
 
-        assertEquals(resource, response);
+        assertEquals(dto, response);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CollectionServiceTest {
     }
 
     @Test
-    public void saveCreateCollectionDto_returnResource() {
+    public void saveCreateCollectionDto_returnDto() {
         when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
         CollectionDto expected = new CollectionDto(1L);
         when(collectionMapper.entityToDto(any())).thenReturn(expected);

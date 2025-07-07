@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EntryMapper {
-    public EntryEntity resourceToEntity(EntryDto entryDto) {
+    public EntryEntity dtoToEntity(EntryDto entryDto) {
         EntryEntity entryEntity = new EntryEntity();
         entryEntity.setId(entryDto.getId());
         entryEntity.setUserId(entryDto.getUserId());
@@ -16,7 +16,7 @@ public class EntryMapper {
         return entryEntity;
     }
 
-    public EntryDto entityToResource(EntryEntity entryEntity) {
+    public EntryDto entityToDto(EntryEntity entryEntity) {
         EntryDto entryDto = new EntryDto();
         entryDto.setId(entryEntity.getId());
         entryDto.setUserId(entryEntity.getUserId());

@@ -22,7 +22,7 @@ public class CollectionMapper {
         collectionDto.setDescription(createDto.getDescription());
         collectionDto.setUserId(createDto.getUserId());
         collectionDto.setIsDefaultCollection(createDto.getIsDefaultCollection());
-        collectionDto.setBooks(books.stream().map(bookMapper::resourceToEntity).toList());
+        collectionDto.setBooks(books.stream().map(bookMapper::dtoToEntity).toList());
 
         return collectionDto;
     }
@@ -33,7 +33,7 @@ public class CollectionMapper {
         dto.setTitle(entity.getTitle());
         dto.setDescription(entity.getDescription());
         dto.setIsDefaultCollection(entity.getIsDefaultCollection());
-        dto.setBooks(entity.getBooks().stream().map(e -> bookMapper.entityToResource(e)).toList());
+        dto.setBooks(entity.getBooks().stream().map(e -> bookMapper.entityToDto(e)).toList());
         return dto;
     }
 
@@ -44,7 +44,7 @@ public class CollectionMapper {
         entity.setTitle(dto.getTitle());
         entity.setDescription(dto.getDescription());
         entity.setIsDefaultCollection(dto.getIsDefaultCollection());
-        entity.setBooks(dto.getBooks().stream().map(d -> bookMapper.resourceToEntity(d)).toList());
+        entity.setBooks(dto.getBooks().stream().map(d -> bookMapper.dtoToEntity(d)).toList());
         return entity;
     }
 }

@@ -27,7 +27,7 @@ public class BookService {
      */
     public BookDto getBookById(Long id) {
         Optional<BookEntity> optional = bookRepository.findById(id);
-        return optional.map(bookMapper::entityToResource).orElse(null);
+        return optional.map(bookMapper::entityToDto).orElse(null);
     }
 
     /**
@@ -38,7 +38,7 @@ public class BookService {
     public List<BookDto> getAllBooksById(List<Long> ids) {
         Iterable<BookEntity> entities = bookRepository.findAllById(ids);
         List<BookDto> books = new ArrayList<>();
-        entities.forEach(e -> books.add(bookMapper.entityToResource(e)));
+        entities.forEach(e -> books.add(bookMapper.entityToDto(e)));
         return books;
     }
 
@@ -48,8 +48,8 @@ public class BookService {
      * @return the created book
      */
     public BookDto createBook(BookDto bookDto) {
-        BookEntity bookEntity = bookMapper.resourceToEntity(bookDto);
-        return bookMapper.entityToResource(bookRepository.save(bookEntity));
+        BookEntity bookEntity = bookMapper.dtoToEntity(bookDto);
+        return bookMapper.entityToDto(bookRepository.save(bookEntity));
     }
 
     /**
@@ -61,7 +61,7 @@ public class BookService {
         List<BookDto> bookDtos = new ArrayList<>();
 
         for (BookEntity entity : entities) {
-            bookDtos.add(bookMapper.entityToResource(entity));
+            bookDtos.add(bookMapper.entityToDto(entity));
         }
 
         return bookDtos;

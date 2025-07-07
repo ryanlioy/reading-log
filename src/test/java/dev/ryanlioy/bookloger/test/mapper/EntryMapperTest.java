@@ -16,32 +16,32 @@ public class EntryMapperTest {
     }
 
     @Test
-    void entityToResourceTest() {
+    void entityToDtoTest() {
         EntryEntity entity = new EntryEntity();
         entity.setId(1L);
         entity.setDescription("description");
         entity.setUserId(2L);
         entity.setBookId(3L);
 
-        EntryDto resource = entryMapper.entityToResource(entity);
-        Assertions.assertEquals(entity.getId(), resource.getId());
-        Assertions.assertEquals(entity.getDescription(), resource.getDescription());
-        Assertions.assertEquals(entity.getUserId(), resource.getUserId());
-        Assertions.assertEquals(entity.getBookId(), resource.getBookId());
+        EntryDto dto = entryMapper.entityToDto(entity);
+        Assertions.assertEquals(entity.getId(), dto.getId());
+        Assertions.assertEquals(entity.getDescription(), dto.getDescription());
+        Assertions.assertEquals(entity.getUserId(), dto.getUserId());
+        Assertions.assertEquals(entity.getBookId(), dto.getBookId());
     }
 
     @Test
-    void resourceToEntityTest() {
-        EntryDto resource = new EntryDto();
-        resource.setId(1L);
-        resource.setDescription("description");
-        resource.setUserId(2L);
-        resource.setBookId(3L);
+    void dtoToEntityTest() {
+        EntryDto dto = new EntryDto();
+        dto.setId(1L);
+        dto.setDescription("description");
+        dto.setUserId(2L);
+        dto.setBookId(3L);
 
-        EntryEntity entity = entryMapper.resourceToEntity(resource);
-        Assertions.assertEquals(resource.getId(), entity.getId());
-        Assertions.assertEquals(resource.getDescription(), entity.getDescription());
-        Assertions.assertEquals(resource.getUserId(), entity.getUserId());
-        Assertions.assertEquals(resource.getBookId(), entity.getBookId());
+        EntryEntity entity = entryMapper.dtoToEntity(dto);
+        Assertions.assertEquals(dto.getId(), entity.getId());
+        Assertions.assertEquals(dto.getDescription(), entity.getDescription());
+        Assertions.assertEquals(dto.getUserId(), entity.getUserId());
+        Assertions.assertEquals(dto.getBookId(), entity.getBookId());
     }
 }
