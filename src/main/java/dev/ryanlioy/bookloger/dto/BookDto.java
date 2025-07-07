@@ -9,6 +9,10 @@ import java.util.List;
 
 @Data
 public class BookDto {
+    public BookDto() {}
+    public BookDto(Long id) {
+        this.id = id;
+    }
     @Id
     Long id;
     Long seriesId;

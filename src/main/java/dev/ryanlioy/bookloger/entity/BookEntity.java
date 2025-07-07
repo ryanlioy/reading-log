@@ -21,6 +21,8 @@ import java.util.List;
 @Data
 @Table(name = "book")
 public class BookEntity {
+    public BookEntity() {}
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
