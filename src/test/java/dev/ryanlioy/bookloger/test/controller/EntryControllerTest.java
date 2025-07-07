@@ -2,7 +2,6 @@ package dev.ryanlioy.bookloger.test.controller;
 
 import dev.ryanlioy.bookloger.controller.EntryController;
 import dev.ryanlioy.bookloger.dto.EntryDto;
-import dev.ryanlioy.bookloger.entity.EntryEntity;
 import dev.ryanlioy.bookloger.mapper.EntryMapper;
 import dev.ryanlioy.bookloger.service.EntryService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,9 +63,7 @@ public class EntryControllerTest {
 
     @Test
     public void getEntryById_entityExists() {
-        EntryEntity entryEntity = new EntryEntity();
-        when(entryService.getEntryById(any())).thenReturn(Optional.of(entryEntity));
-        when(entryMapper.entityToResource(any())).thenReturn(new EntryDto());
+        when(entryService.getEntryById(any())).thenReturn(new EntryDto());
         var response = entryController.getEntryById(1L);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getContent()).isNotNull();
@@ -75,7 +71,7 @@ public class EntryControllerTest {
 
     @Test
     public void getEntryById_entityDoesNotExist() {
-        when(entryService.getEntryById(any())).thenReturn(Optional.empty());
+        when(entryService.getEntryById(any())).thenReturn(null);
         var response = entryController.getEntryById(1L);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(response.getBody().getContent()).isNull();

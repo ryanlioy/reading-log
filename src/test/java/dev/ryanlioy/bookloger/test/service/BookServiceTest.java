@@ -18,6 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -44,20 +45,20 @@ public class BookServiceTest {
         BookEntity bookEntity = new BookEntity();
         bookEntity.setId(1L);
         when(bookRepository.findById((any()))).thenReturn(Optional.of(bookEntity));
-        Optional<BookEntity> entity = bookService.getBookById(1L);
+        when(bookMapper.entityToResource(bookEntity)).thenReturn(new BookDto());
+        BookDto book = bookService.getBookById(1L);
 
-        assertTrue(entity.isPresent());
-        assertEquals(bookEntity, entity.get());
+        assertNotNull(book);
     }
 
     @Test
-    public void getBookById_whenNoBookIsFound_returnsEmptyOptional() {
+    public void getBookById_whenNoBookIsFound_returnsNull() {
         BookEntity bookEntity = new BookEntity();
         bookEntity.setId(1L);
         when(bookRepository.findById((any()))).thenReturn(Optional.empty());
-        Optional<BookEntity> entity = bookService.getBookById(1L);
+        BookDto book = bookService.getBookById(1L);
 
-        assertFalse(entity.isPresent());
+        assertNull(book);
     }
 
     @Test

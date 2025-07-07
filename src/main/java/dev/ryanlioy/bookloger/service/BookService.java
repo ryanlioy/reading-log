@@ -25,8 +25,9 @@ public class BookService {
      * @param id the book ID
      * @return an optional containing the specified book
      */
-    public Optional<BookEntity> getBookById(Long id) {
-        return bookRepository.findById(id);
+    public BookDto getBookById(Long id) {
+        Optional<BookEntity> optional = bookRepository.findById(id);
+        return optional.map(bookMapper::entityToResource).orElse(null);
     }
 
     /**

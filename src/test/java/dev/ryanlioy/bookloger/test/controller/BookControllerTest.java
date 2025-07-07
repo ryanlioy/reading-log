@@ -1,10 +1,9 @@
 package dev.ryanlioy.bookloger.test.controller;
 
 import dev.ryanlioy.bookloger.controller.BookController;
-import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
-import dev.ryanlioy.bookloger.entity.BookEntity;
-import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
+import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.service.BookService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -51,14 +49,14 @@ public class BookControllerTest {
 
     @Test
     public void getBookById_bookFound() {
-        when(bookService.getBookById(any())).thenReturn(Optional.of(new BookEntity()));
+        when(bookService.getBookById(any())).thenReturn(new BookDto());
         ResponseEntity<EnvelopeDto<BookDto>> response = bookController.getBook(1L);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void getBookById_bookNotFound() {
-        when(bookService.getBookById(any())).thenReturn(Optional.empty());
+        when(bookService.getBookById(any())).thenReturn(null);
         ResponseEntity<EnvelopeDto<BookDto>> response = bookController.getBook(1L);
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }

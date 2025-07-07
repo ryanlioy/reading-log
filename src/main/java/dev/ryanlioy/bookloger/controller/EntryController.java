@@ -58,14 +58,12 @@ public class EntryController {
      */
     @GetMapping("/{entryId}")
     public ResponseEntity<EnvelopeDto<EntryDto>> getEntryById(@PathVariable Long entryId) {
-        Optional<EntryEntity> entryEntity = entryService.getEntryById(entryId);
-        EntryDto entryDto = null;
+        EntryDto entry = entryService.getEntryById(entryId);
         HttpStatus status = HttpStatus.NO_CONTENT;
-        if (entryEntity.isPresent()) {
-            entryDto = entryMapper.entityToResource(entryEntity.get());
+        if (entry != null) {
             status = HttpStatus.OK;
         }
-        return new ResponseEntity<>(new EnvelopeDto<>(entryDto), status);
+        return new ResponseEntity<>(new EnvelopeDto<>(entry), status);
     }
 
     /**

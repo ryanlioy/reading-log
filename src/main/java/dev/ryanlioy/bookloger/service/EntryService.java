@@ -51,8 +51,9 @@ public class EntryService {
      * @param entryId the ID of the entry
      * @return {@link Optional} that may contain the list
      */
-    public Optional<EntryEntity> getEntryById(Long entryId) {
-        return entryRepository.findById(entryId);
+    public EntryDto getEntryById(Long entryId) {
+        Optional<EntryEntity> optional = entryRepository.findById(entryId);
+        return optional.map(entryMapper::entityToResource).orElse(null);
     }
 
     /**

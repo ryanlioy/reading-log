@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/book")
@@ -46,15 +45,13 @@ public class BookController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<EnvelopeDto<BookDto>> getBook(@PathVariable Long id) {
-        Optional<BookEntity> optional = bookService.getBookById(id);
-        BookDto bookDto = null;
+        BookDto book = bookService.getBookById(id);
         HttpStatus status = HttpStatus.NO_CONTENT;
-        if (optional.isPresent()) {
-            bookDto = bookMapper.entityToResource(optional.get());
+        if (book != null) {
             status = HttpStatus.OK;
         }
 
-        return new ResponseEntity<>(new EnvelopeDto<>(bookDto), status);
+        return new ResponseEntity<>(new EnvelopeDto<>(book), status);
     }
 
     /**
