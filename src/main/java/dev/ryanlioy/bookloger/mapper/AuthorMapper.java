@@ -1,8 +1,12 @@
 package dev.ryanlioy.bookloger.mapper;
 
 import dev.ryanlioy.bookloger.dto.AuthorDto;
+import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.dto.CreateAuthorDto;
 import dev.ryanlioy.bookloger.entity.AuthorEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class AuthorMapper {
@@ -28,6 +32,16 @@ public class AuthorMapper {
         entity.setName(dto.getName());
         entity.setAge(dto.getAge());
         entity.setBooks(dto.getBooks().stream().map(bookMapper::dtoToEntity).toList());
+
+        return entity;
+    }
+
+    public AuthorEntity createDtoToEntity(CreateAuthorDto createAuthorDto, List<BookDto> books) {
+        AuthorEntity entity = new AuthorEntity();
+        entity.setId(createAuthorDto.getId());
+        entity.setAge(createAuthorDto.getAge());
+        entity.setName(createAuthorDto.getName());
+        entity.setBooks(books.stream().map(bookMapper::dtoToEntity).toList());
 
         return entity;
     }

@@ -22,6 +22,9 @@ import java.util.List;
 @Table(name = "book")
 public class BookEntity {
     public BookEntity() {}
+    public BookEntity(Long id) {
+        this.id = id;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

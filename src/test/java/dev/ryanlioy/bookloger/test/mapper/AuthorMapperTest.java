@@ -2,6 +2,7 @@ package dev.ryanlioy.bookloger.test.mapper;
 
 import dev.ryanlioy.bookloger.dto.AuthorDto;
 import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.dto.CreateAuthorDto;
 import dev.ryanlioy.bookloger.entity.AuthorEntity;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.AuthorMapper;
@@ -67,5 +68,23 @@ public class AuthorMapperTest {
         assertEquals(dto.getAge(), entity.getAge());
         assertEquals(dto.getName(), entity.getName());
         assertNotNull(dto.getBooks());
+    }
+
+    @Test
+    public void createDtoToEntity() {
+        when(bookMapper.dtoToEntity(any())).thenReturn(new BookEntity(1L));
+
+        CreateAuthorDto expected = new CreateAuthorDto();
+        expected.setId(1L);
+        expected.setAge(1);
+        expected.setName("name");
+        expected.setBookIds(List.of(1L));
+
+        BookDto book = new BookDto(1L);
+        AuthorEntity actual = authorMapper.createDtoToEntity(expected, List.of(book));
+        assertEquals(actual.getId(), expected.getId());
+        assertEquals(actual.getAge(), expected.getAge());
+        assertEquals(actual.getName(), expected.getName());
+        assertEquals(actual.getBooks().getFirst().getId(), expected.getBookIds().getFirst());
     }
 }
