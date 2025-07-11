@@ -2,8 +2,6 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.dto.EntryDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
-import dev.ryanlioy.bookloger.entity.EntryEntity;
-import dev.ryanlioy.bookloger.mapper.EntryMapper;
 import dev.ryanlioy.bookloger.service.EntryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/entry")
 public class EntryController {
     private final EntryService entryService;
-    private final EntryMapper entryMapper;
 
-    public EntryController(EntryService entryService, EntryMapper entryMapper) {
+    public EntryController(EntryService entryService) {
         this.entryService = entryService;
-        this.entryMapper = entryMapper;
     }
 
     /**

@@ -3,7 +3,6 @@ package dev.ryanlioy.bookloger.test.controller;
 import dev.ryanlioy.bookloger.controller.BookController;
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
-import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.service.BookService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,14 +27,11 @@ public class BookControllerTest {
     @Mock
     private BookService bookService;
 
-    @Mock
-    private BookMapper bookMapper;
-
     private BookController bookController;
 
     @BeforeEach
     void setUp() {
-        bookController = new BookController(bookMapper, bookService);
+        bookController = new BookController(bookService);
     }
 
     @Test

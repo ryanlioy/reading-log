@@ -3,7 +3,6 @@ package dev.ryanlioy.bookloger.controller;
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
-import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/book")
 public class BookController {
-    private final BookMapper bookMapper;
     private final BookService bookService;
 
-    public BookController(BookMapper bookMapper, BookService bookService) {
-        this.bookMapper = bookMapper;
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
