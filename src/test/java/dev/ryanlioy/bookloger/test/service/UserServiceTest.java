@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -86,5 +88,19 @@ public class UserServiceTest {
 
         userService.deleteUser(1L);
         verify(collectionService, times(1)).deleteAllById(any());
+    }
+
+    @Test
+    public void doesUserExist_userExists_returnTrue() {
+        when(userRepository.existsById(any())).thenReturn(true);
+        boolean userExists = userService.doesUserExist(1L);
+        assertTrue(userExists);
+    }
+
+    @Test
+    public void doesUserExist_userExists_returnFalse() {
+        when(userRepository.existsById(any())).thenReturn(false);
+        boolean userExists = userService.doesUserExist(1L);
+        assertFalse(userExists);
     }
 }

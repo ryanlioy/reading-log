@@ -9,6 +9,7 @@ import dev.ryanlioy.bookloger.mapper.CollectionMapper;
 import dev.ryanlioy.bookloger.repository.CollectionRepository;
 import dev.ryanlioy.bookloger.service.BookService;
 import dev.ryanlioy.bookloger.service.CollectionService;
+import dev.ryanlioy.bookloger.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,11 +41,14 @@ public class CollectionServiceTest {
     @Mock
     private BookService bookService;
 
+    @Mock
+    private UserService userService;
+
     private CollectionService collectionService;
 
     @BeforeEach
     public void setUp() {
-        collectionService = new CollectionService(collectionRepository, collectionMapper, bookService);
+        collectionService = new CollectionService(collectionRepository, collectionMapper, bookService, userService);
     }
 
     @Test
@@ -69,8 +73,16 @@ public class CollectionServiceTest {
         when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
         CollectionDto expected = new CollectionDto(1L);
         when(collectionMapper.entityToDto(any())).thenReturn(expected);
+        when(userService.doesUserExist(any())).thenReturn(true);
+
         CollectionDto response = collectionService.save(new CreateCollectionDto());
         assertEquals(expected, response);
+    }
+
+    @Test
+    public void saveCreateCollectionDto_throwException() {
+        when(userService.doesUserExist(any())).thenReturn(false);
+        assertThrows(RuntimeException.class, () -> collectionService.save(new CreateCollectionDto()));
     }
 
     @Test
@@ -78,6 +90,8 @@ public class CollectionServiceTest {
         when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
         CollectionDto expected = new CollectionDto(1L);
         when(collectionMapper.entityToDto(any())).thenReturn(expected);
+        when(userService.doesUserExist(any())).thenReturn(true);
+
         CollectionDto response = collectionService.save(new CollectionDto());
         assertEquals(expected, response);
     }
@@ -102,9 +116,11 @@ public class CollectionServiceTest {
     @Test
     public void findAllByUserId_whenFound_returnNonEmptyList() {
         when(collectionRepository.findAllByUserId(any())).thenReturn(List.of(new CollectionEntity()));
-        CollectionDto dto =  new CollectionDto();
+        CollectionDto dto = new CollectionDto();
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
+
         List<CollectionDto> response = collectionService.findAllByUserId(1L);
+
         assertThat(response.isEmpty()).isFalse();
         assertEquals(response.getFirst(), dto);
     }
@@ -117,7 +133,7 @@ public class CollectionServiceTest {
     }
 
     @Test
-    public void addBooksToCollection_requestContainsBooksIds_addBooksToCollection() {
+    public void save_requestContainsBooksIds_addBooksToCollection() {
         when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity(1L)));
         BookDto expectedBook = new BookDto();
         when(bookService.getAllBooksById(any())).thenReturn(List.of(expectedBook));
@@ -126,15 +142,24 @@ public class CollectionServiceTest {
         dto.setBooks(new ArrayList<>());
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
         when(collectionMapper.dtoToEntity(any())).thenReturn(new CollectionEntity(1L));
+        when(userService.doesUserExist(any())).thenReturn(true);
+
         ModifyCollectionDto modifyCollectionDto = new ModifyCollectionDto();
         modifyCollectionDto.setBookIds(List.of(1L));
         CollectionDto response = collectionService.addBooksToCollection(modifyCollectionDto);
+
         assertEquals(1, response.getBooks().size());
         assertEquals(response.getBooks().getFirst(), expectedBook);
     }
 
+    @Test
+    public void save_userDoesNotExist_throwException() {
+        when(userService.doesUserExist(any())).thenReturn(false);
+        assertThrows(RuntimeException.class, () -> collectionService.save(new CollectionDto()));
+    }
+
     @Test // TODO will need to change once returning errors
-    public void addBooksToCollection_collectionDoesNotExist_throwException() {
+    public void save_collectionDoesNotExist_throwException() {
         when(collectionRepository.findById(any())).thenReturn(Optional.empty());
         ModifyCollectionDto dto = new ModifyCollectionDto();
         dto.setBookIds(List.of(1L));
@@ -149,8 +174,10 @@ public class CollectionServiceTest {
         when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
         when(collectionMapper.entityToDto(any())).thenReturn(collection);
         when(bookService.getAllBooksById(any())).thenReturn(List.of(book));
+        when(userService.doesUserExist(any())).thenReturn(true);
 
         CollectionDto actual = collectionService.deleteBooksFromCollection(new  ModifyCollectionDto(1L, List.of(1L)));
+
         assertTrue(actual.getBooks().isEmpty());
     }
 
@@ -182,6 +209,7 @@ public class CollectionServiceTest {
         CollectionDto dto = new CollectionDto();
         dto.setIsDefaultCollection(false);
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
+
         collectionService.deleteById(1L);
 
         verify(collectionRepository, times(1)).deleteById(1L);
@@ -195,6 +223,7 @@ public class CollectionServiceTest {
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
 
         assertThrows(RuntimeException.class, () -> collectionService.deleteById(1L));
+
         verify(collectionRepository, times(0)).deleteById(1L);
     }
 }
