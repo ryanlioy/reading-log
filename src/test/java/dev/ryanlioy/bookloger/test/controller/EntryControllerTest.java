@@ -2,7 +2,6 @@ package dev.ryanlioy.bookloger.test.controller;
 
 import dev.ryanlioy.bookloger.controller.EntryController;
 import dev.ryanlioy.bookloger.dto.EntryDto;
-import dev.ryanlioy.bookloger.mapper.EntryMapper;
 import dev.ryanlioy.bookloger.service.EntryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,14 +23,12 @@ import static org.mockito.Mockito.when;
 public class EntryControllerTest {
     @Mock
     private EntryService entryService;
-    @Mock
-    private EntryMapper entryMapper;
 
     private EntryController entryController;
 
     @BeforeEach
     public void setUp() {
-        entryController = new EntryController(entryService, entryMapper);
+        entryController = new EntryController(entryService);
     }
 
     @Test

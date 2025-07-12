@@ -22,19 +22,22 @@ import java.util.List;
 @Table(name = "book")
 public class BookEntity {
     public BookEntity() {}
+    public BookEntity(Long id) {
+        this.id = id;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    Long seriesId;
-    String title;
-    String author;
-    String publisher;
-    LocalDate publishDate;
+    private Long id;
+    private Long seriesId;
+    private String title;
+    private String author;
+    private String publisher;
+    private LocalDate publishDate;
 
     @ElementCollection(targetClass = Genre.class)
     @JoinTable(name = "genres", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "genre")
     @Enumerated(EnumType.STRING)
-    List<Genre> genres;
+    private List<Genre> genres;
 }

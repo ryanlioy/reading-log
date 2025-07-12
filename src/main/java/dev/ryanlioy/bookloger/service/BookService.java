@@ -1,9 +1,10 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
-import dev.ryanlioy.bookloger.dto.BookDto;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,10 +15,12 @@ import java.util.Optional;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final AuthorService authorService;
 
-    public BookService(BookRepository bookRepository, BookMapper bookMapper) {
+    public BookService(BookRepository bookRepository, BookMapper bookMapper, @Lazy AuthorService authorService) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+        this.authorService = authorService;
     }
 
     /**
@@ -48,6 +51,13 @@ public class BookService {
      * @return the created book
      */
     public BookDto createBook(BookDto bookDto) {
+        // check that author exists
+        String authorName = bookDto.getAuthor();
+        boolean authorExists = authorService.doesAuthorExist(authorName);
+        if (!authorExists) {
+            throw new RuntimeException(String.format("No author with name %s exists", authorName));
+        }
+
         BookEntity bookEntity = bookMapper.dtoToEntity(bookDto);
         return bookMapper.entityToDto(bookRepository.save(bookEntity));
     }
