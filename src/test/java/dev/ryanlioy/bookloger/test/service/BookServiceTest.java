@@ -1,5 +1,6 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.service.AuthorService;
 import dev.ryanlioy.bookloger.service.BookService;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -33,11 +35,14 @@ public class BookServiceTest {
     @Mock
     private BookMapper bookMapper;
 
+    @Mock
+    private AuthorService authorService;
+
     private BookService bookService;
 
     @BeforeEach
     public void setUp() {
-        bookService = new BookService(bookRepository, bookMapper);
+        bookService = new BookService(bookRepository, bookMapper, authorService);
     }
 
     @Test
@@ -64,12 +69,19 @@ public class BookServiceTest {
     @Test
     public void createBook_whenBookCreated_returnDto() {
         when(bookRepository.save(any())).thenReturn(new BookEntity());
+        when(authorService.doesAuthorExist(any())).thenReturn(true);
         BookDto bookDto = new BookDto();
         bookDto.setId(1L);
         when(bookMapper.entityToDto(any())).thenReturn(bookDto);
         BookDto returnDto = bookService.createBook(new BookDto());
 
         assertNotNull(returnDto.getId());
+    }
+
+    @Test
+    public void createBook_whenAuthorDoesNotExist_throwError() {
+        when(authorService.doesAuthorExist(any())).thenReturn(false);
+        assertThrows(RuntimeException.class, () -> bookService.createBook(new BookDto()));
     }
 
     @Test
