@@ -7,6 +7,7 @@ import dev.ryanlioy.bookloger.dto.ModifyCollectionDto;
 import dev.ryanlioy.bookloger.entity.CollectionEntity;
 import dev.ryanlioy.bookloger.mapper.CollectionMapper;
 import dev.ryanlioy.bookloger.repository.CollectionRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,11 +19,13 @@ public class CollectionService {
     private final CollectionRepository collectionRepository;
     private final CollectionMapper collectionMapper;
     private final BookService bookService;
+    private final UserService userService;
 
-    public CollectionService(CollectionRepository collectionRepository, CollectionMapper collectionMapper, BookService bookService) {
+    public CollectionService(CollectionRepository collectionRepository, CollectionMapper collectionMapper, BookService bookService, @Lazy UserService userService) {
         this.collectionRepository = collectionRepository;
         this.collectionMapper = collectionMapper;
         this.bookService = bookService;
+        this.userService = userService;
     }
 
     /**
@@ -56,6 +59,11 @@ public class CollectionService {
      * @return the created collection
      */
     public CollectionDto save(CreateCollectionDto createCollectionDto) {
+        Long userId = createCollectionDto.getUserId();
+        boolean userExists = userService.doesUserExist(userId);
+        if (!userExists) {
+            throw new RuntimeException(String.format("User with ID=%s does not exist",  userId));
+        }
         List<BookDto> books = bookService.getAllBooksById(createCollectionDto.getBookIds());
         return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.createDtoToEntity(createCollectionDto, books)));
     }
@@ -66,6 +74,11 @@ public class CollectionService {
      * @return the created collection
      */
     public CollectionDto save(CollectionDto dto) {
+        Long userId = dto.getUserId();
+        boolean userExists = userService.doesUserExist(userId);
+        if (!userExists) {
+            throw new RuntimeException(String.format("User with ID=%s does not exist",  userId));
+        }
         return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.dtoToEntity(dto)));
     }
 

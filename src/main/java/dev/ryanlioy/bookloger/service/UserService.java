@@ -68,4 +68,13 @@ public class UserService {
         collectionService.deleteAllById(getUserById(id).getCollections().values().stream().toList());
         userRepository.deleteById(id);
     }
+
+    /**
+     * Check if a user exists
+     * @param id the user ID
+     * @return true if the user exists, false otherwise
+     */
+    public boolean doesUserExist(Long id) {
+         return userRepository.existsById(id);
+    }
 }
