@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -66,6 +68,20 @@ public class CollectionService {
         }
         List<BookDto> books = bookService.getAllBooksById(createCollectionDto.getBookIds());
         return collectionMapper.entityToDto(collectionRepository.save(collectionMapper.createDtoToEntity(createCollectionDto, books)));
+    }
+
+    public List<CollectionDto> saveAll(List<CreateCollectionDto> createCollectionDtos) {
+         Set<Long> userIds = createCollectionDtos.stream().map(CreateCollectionDto::getUserId).collect(Collectors.toSet());
+         if (userIds.size() != 1) { // I think it makes sense to limit saving to only one user ID so we only need to check if one user exists
+             throw new RuntimeException(String.format("Trying to save collections to %s users",  userIds.size()));
+         }
+        Iterable<CollectionEntity> entities = collectionRepository.saveAll(createCollectionDtos.stream().map(dto ->
+                collectionMapper.createDtoToEntity(dto, bookService.getAllBooksById(dto.getBookIds()))).toList()
+        );
+
+        List<CollectionDto> dtos = new ArrayList<>();
+        entities.forEach(entity -> dtos.add(collectionMapper.entityToDto(entity)));
+        return dtos;
     }
 
     /**
