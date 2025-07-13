@@ -226,4 +226,29 @@ public class CollectionServiceTest {
 
         verify(collectionRepository, times(0)).deleteById(1L);
     }
+
+    @Test
+    public void saveAll() {
+        when(collectionRepository.saveAll(any())).thenReturn(List.of(new CollectionEntity()));
+        when(collectionMapper.entityToDto(any())).thenReturn(new CollectionDto(1L));
+        when(collectionMapper.createDtoToEntity(any(), any())).thenReturn(new CollectionEntity());
+
+        CreateCollectionDto expected = new CreateCollectionDto(1L);
+        expected.setId(1L);
+        List<CollectionDto> actual = collectionService.saveAll(List.of(expected));
+
+        assertEquals(expected.getId(), actual.getFirst().getId());
+    }
+
+    @Test
+    public void saveAll_whenMultipleUsers_throwException() {
+        CreateCollectionDto dto1 = new CreateCollectionDto();
+        dto1.setUserId(1L);
+        CreateCollectionDto dto2 = new CreateCollectionDto();
+        dto2.setUserId(2L);
+        assertThrows(RuntimeException.class, () -> collectionService.saveAll(List.of(
+                dto1,
+                dto2
+        )));
+    }
 }

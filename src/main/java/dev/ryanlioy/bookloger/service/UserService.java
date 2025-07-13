@@ -9,6 +9,7 @@ import dev.ryanlioy.bookloger.dto.UserDto;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,10 +53,12 @@ public class UserService {
 
         UserEntity savedEntity = userRepository.save(entity);
         // create empty collections for favorites, currently reading, finished, and read list
-        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Favorites", true));
-        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Currently Reading", true));
-        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Finished", true));
-        collectionService.save(new CreateCollectionDto(savedEntity.getId(), "Read List", true));
+        collectionService.saveAll(List.of(
+                new CreateCollectionDto(savedEntity.getId(), "Favorites", true),
+                new CreateCollectionDto(savedEntity.getId(), "Currently Reading", true),
+                new CreateCollectionDto(savedEntity.getId(), "Finished", true),
+                new CreateCollectionDto(savedEntity.getId(), "Read List", true)
+        ));
 
         return getUserById(savedEntity.getId());
     }
