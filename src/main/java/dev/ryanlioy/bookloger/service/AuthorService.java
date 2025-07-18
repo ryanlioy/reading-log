@@ -6,6 +6,8 @@ import dev.ryanlioy.bookloger.dto.CreateAuthorDto;
 import dev.ryanlioy.bookloger.entity.AuthorEntity;
 import dev.ryanlioy.bookloger.mapper.AuthorMapper;
 import dev.ryanlioy.bookloger.repository.AuthorRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.Optional;
 
 @Service
 public class AuthorService {
+    private static final Logger LOG = LoggerFactory.getLogger(AuthorService.class);
+    private static final String CLASS_LOG = "AuthorService::";
+
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
     private final BookService bookService;
@@ -30,11 +35,8 @@ public class AuthorService {
      */
     public AuthorDto findAuthorById(Long id) {
         Optional<AuthorEntity> author = authorRepository.findById(id);
-        AuthorDto dto = null;
-        if (author.isPresent()) {
-            dto = authorMapper.entityToDto(author.get());
-        }
-        return dto;
+        LOG.info("{}findAuthorById() Author with ID={} " + (author.isPresent() ? "found" : "not found"), CLASS_LOG, author);
+        return author.map(authorMapper::entityToDto).orElse(null);
     }
 
     /**
@@ -44,7 +46,9 @@ public class AuthorService {
      */
     public AuthorDto createAuthor(CreateAuthorDto createAuthorDto) {
         List<BookDto> books = bookService.getAllBooksById(createAuthorDto.getBookIds());
-        return authorMapper.entityToDto(authorRepository.save(authorMapper.createDtoToEntity(createAuthorDto, books)));
+        AuthorEntity entity = authorRepository.save(authorMapper.createDtoToEntity(createAuthorDto, books));
+        LOG.info("{}createAuthor() Author with ID={} created", CLASS_LOG, entity.getId());
+        return authorMapper.entityToDto(entity);
     }
 
     /**
@@ -53,6 +57,7 @@ public class AuthorService {
      */
     public void deleteAuthorById(Long id) {
         authorRepository.deleteById(id);
+        LOG.info("{}deleteAuthorById() Author with ID={} deleted", CLASS_LOG, id);
     }
 
     /**
@@ -61,11 +66,14 @@ public class AuthorService {
      * @return {@link List} of authors, empty list if no authors are found
      */
     public List<AuthorDto> getAuthorsByBookId(Long bookId) {
-        return authorRepository.findAllAuthorsByBookId(bookId).stream().map(authorMapper::entityToDto).toList();
+        List<AuthorEntity> entities = authorRepository.findAllAuthorsByBookId(bookId);
+        LOG.info("{}getAuthorsByBookId() Found {} authors for book with ID={}", CLASS_LOG, entities.size(), bookId);
+        return entities.stream().map(authorMapper::entityToDto).toList();
     }
 
     public boolean doesAuthorExist(String name) {
         Optional<AuthorEntity> author = authorRepository.findByName(name);
+        LOG.info("{}doesAuthorExist() author with name {}" +  (author.isPresent() ? "exists" : "does not exist"), CLASS_LOG, author);
         return author.isPresent();
     }
 }
