@@ -6,6 +6,8 @@ import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
 import dev.ryanlioy.bookloger.dto.UserDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -15,6 +17,8 @@ import java.util.Optional;
 
 @Component
 public class UserService {
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+    private static final String CLASS_LOG = "UserService::";
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CollectionService collectionService;
@@ -39,7 +43,7 @@ public class UserService {
             collectionService.findAllByUserId(id).forEach(c -> collections.put(c.getTitle(), c));
             userDto.setCollections(collections);
         }
-
+        LOG.info("{}getUserById() user with ID={} " + (userDto == null ? "not found" : "found"), CLASS_LOG, id);
         return userDto;
     }
 
@@ -59,7 +63,7 @@ public class UserService {
                 new CreateCollectionDto(savedEntity.getId(), "Finished", true),
                 new CreateCollectionDto(savedEntity.getId(), "Read List", true)
         ));
-
+        LOG.info("{}addUser() created user with ID={}", CLASS_LOG, entity.getId());
         return getUserById(savedEntity.getId());
     }
 
@@ -70,6 +74,7 @@ public class UserService {
     public void deleteUser(Long id) {
         collectionService.deleteAllById(getUserById(id).getCollections().values().stream().toList());
         userRepository.deleteById(id);
+        LOG.info("{}deleteUser() deleted user with ID={}", CLASS_LOG, id);
     }
 
     /**

@@ -17,7 +17,6 @@ import java.util.Optional;
 public class AuthorService {
     private static final Logger LOG = LoggerFactory.getLogger(AuthorService.class);
     private static final String CLASS_LOG = "AuthorService::";
-
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
     private final BookService bookService;

@@ -16,7 +16,6 @@ import java.util.Optional;
 public class EntryService {
     private static final Logger LOG = LoggerFactory.getLogger(EntryService.class);
     private static final String CLASS_LOG = "EntryService::";
-
     private final EntryRepository entryRepository;
     private final EntryMapper entryMapper;
 
