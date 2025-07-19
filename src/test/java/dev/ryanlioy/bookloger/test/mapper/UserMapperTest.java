@@ -44,7 +44,7 @@ public class UserMapperTest {
         assertEquals(userDto.getId(), userEntity.getId());
         assertEquals(userDto.getUsername(), userEntity.getUsername());
         assertEquals(userDto.getCollections().size(), userEntity.getCollections().size());
-        assertEquals(userDto.getRole().name(), userEntity.getRole().getName());
+        assertEquals(userDto.getRole(), userEntity.getRole().getName());
     }
 
     @Test
@@ -53,12 +53,12 @@ public class UserMapperTest {
         userDto.setId(1L);
         userDto.setUsername("username");
         userDto.setCollections(Map.of("title", new CollectionDto()));
-        userDto.setRole(Role.ADMIN);
+        userDto.setRole(Role.ADMIN.name());
 
         UserEntity userEntity = userMapper.dtoToEntity(userDto, new RoleEntity(1L, "ADMIN"));
         assertEquals(userDto.getId(), userEntity.getId());
         assertEquals(userDto.getUsername(), userEntity.getUsername());
         assertEquals(userDto.getCollections().size(), userEntity.getCollections().size());
-        assertEquals(userDto.getRole().name(), userEntity.getRole().getName());
+        assertEquals(userDto.getRole(), userEntity.getRole().getName());
     }
 }

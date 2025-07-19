@@ -1,8 +1,10 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
 import dev.ryanlioy.bookloger.dto.UserDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.RoleEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
@@ -55,11 +57,12 @@ public class UserService {
      * @param userDto the user to create
      * @return the created user
      */
-    public UserDto addUser(UserDto userDto) {
-        RoleEntity role = roleService.getRoleByName(userDto.getRole().name());
+    public UserDto addUser(UserDto userDto, List<ErrorDto> errors) {
+        RoleEntity role = roleService.getRoleByName(userDto.getRole());
         if (role == null) {
-            LOG.error("{}addUser() role with name={} found", CLASS_LOG, userDto.getRole().name());
-            throw new RuntimeException("Role not found");
+            LOG.error("{}addUser() role with name={} found", CLASS_LOG, userDto.getRole());
+            errors.add(new ErrorDto(Errors.ROLE_DOES_NOT_EXIST));
+            return null;
         }
         UserEntity entity = userMapper.dtoToEntity(userDto, role);
 

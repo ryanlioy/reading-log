@@ -1,6 +1,5 @@
 package dev.ryanlioy.bookloger.dto;
 
-import dev.ryanlioy.bookloger.constants.Role;
 import lombok.Data;
 
 import java.util.Map;
@@ -13,6 +12,6 @@ public class UserDto {
     }
     private Long id;
     private String username;
-    private Role role;
+    private String role;
     private Map<String, CollectionDto> collections; // TODO not sure if a map or list would be best here
 }

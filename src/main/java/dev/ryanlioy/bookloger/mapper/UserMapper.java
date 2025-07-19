@@ -1,6 +1,5 @@
 package dev.ryanlioy.bookloger.mapper;
 
-import dev.ryanlioy.bookloger.constants.Role;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.UserDto;
 import dev.ryanlioy.bookloger.entity.CollectionEntity;
@@ -46,7 +45,7 @@ public class UserMapper {
         Map<String, CollectionDto> collections = new HashMap<>();
         entity.getCollections().forEach(e -> collections.put(e.getTitle(), collectionMapper.entityToDto(e)));
         dto.setCollections(collections);
-        dto.setRole(Role.valueOf(entity.getRole().getName()));
+        dto.setRole(entity.getRole().getName());
 
         return dto;
     }
