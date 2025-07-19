@@ -2,10 +2,11 @@ package dev.ryanlioy.bookloger.service;
 
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
+import dev.ryanlioy.bookloger.dto.UserDto;
+import dev.ryanlioy.bookloger.entity.RoleEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
-import dev.ryanlioy.bookloger.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,11 +23,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CollectionService collectionService;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, CollectionService collectionService) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, CollectionService collectionService, RoleService roleService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.collectionService = collectionService;
+        this.roleService = roleService;
     }
 
     /**
@@ -53,7 +56,12 @@ public class UserService {
      * @return the created user
      */
     public UserDto addUser(UserDto userDto) {
-        UserEntity entity = userMapper.dtoToEntity(userDto);
+        RoleEntity role = roleService.getRoleByName(userDto.getRole().name());
+        if (role == null) {
+            LOG.error("{}addUser() role with name={} found", CLASS_LOG, userDto.getRole().name());
+            throw new RuntimeException("Role not found");
+        }
+        UserEntity entity = userMapper.dtoToEntity(userDto, role);
 
         UserEntity savedEntity = userRepository.save(entity);
         // create empty collections for favorites, currently reading, finished, and read list
