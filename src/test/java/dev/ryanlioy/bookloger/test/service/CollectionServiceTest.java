@@ -175,6 +175,7 @@ public class CollectionServiceTest {
         when(collectionMapper.entityToDto(any())).thenReturn(collection);
         when(bookService.getAllBooksById(any())).thenReturn(List.of(book));
         when(userService.doesUserExist(any())).thenReturn(true);
+        when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
 
         CollectionDto actual = collectionService.deleteBooksFromCollection(new  ModifyCollectionDto(1L, List.of(1L)));
 

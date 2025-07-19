@@ -1,7 +1,9 @@
 package dev.ryanlioy.bookloger.test.mapper;
 
+import dev.ryanlioy.bookloger.constants.Role;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.entity.CollectionEntity;
+import dev.ryanlioy.bookloger.entity.RoleEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.CollectionMapper;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
@@ -35,12 +37,14 @@ public class UserMapperTest {
         userEntity.setId(1L);
         userEntity.setUsername("username");
         userEntity.setCollections(List.of(new CollectionEntity()));
+        userEntity.setRole(new RoleEntity(1L, "ADMIN"));
 
         UserDto userDto = userMapper.entityToDto(userEntity);
 
         assertEquals(userDto.getId(), userEntity.getId());
         assertEquals(userDto.getUsername(), userEntity.getUsername());
         assertEquals(userDto.getCollections().size(), userEntity.getCollections().size());
+        assertEquals(userDto.getRole().name(), userEntity.getRole().getName());
     }
 
     @Test
@@ -49,10 +53,12 @@ public class UserMapperTest {
         userDto.setId(1L);
         userDto.setUsername("username");
         userDto.setCollections(Map.of("title", new CollectionDto()));
+        userDto.setRole(Role.ADMIN);
 
-        UserEntity userEntity = userMapper.dtoToEntity(userDto);
+        UserEntity userEntity = userMapper.dtoToEntity(userDto, new RoleEntity(1L, "ADMIN"));
         assertEquals(userDto.getId(), userEntity.getId());
         assertEquals(userDto.getUsername(), userEntity.getUsername());
         assertEquals(userDto.getCollections().size(), userEntity.getCollections().size());
+        assertEquals(userDto.getRole().name(), userEntity.getRole().getName());
     }
 }
