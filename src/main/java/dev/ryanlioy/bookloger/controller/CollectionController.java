@@ -4,6 +4,7 @@ import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
 import dev.ryanlioy.bookloger.dto.ModifyCollectionDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.service.CollectionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -44,7 +46,13 @@ public class CollectionController {
      */
     @PostMapping
     public ResponseEntity<EnvelopeDto<CollectionDto>> create(@RequestBody CreateCollectionDto createCollectionDto) {
-        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.save(createCollectionDto)),  HttpStatus.CREATED);
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto dto = collectionService.save(createCollectionDto, errors);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.CREATED);
+        if (!errors.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 
     /**
@@ -54,7 +62,13 @@ public class CollectionController {
      */
     @PostMapping("/add")
     public ResponseEntity<EnvelopeDto<CollectionDto>> addBooksToCollection(@RequestBody ModifyCollectionDto dto) {
-        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.addBooksToCollection(dto)),  HttpStatus.OK);
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto collection = collectionService.addBooksToCollection(dto, errors);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = new ResponseEntity<>(new EnvelopeDto<>(collection), HttpStatus.OK);
+        if (!errors.isEmpty()) {
+            response =  new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 
     @PostMapping("/remove")

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,12 +69,17 @@ public class UserService {
 
         UserEntity savedEntity = userRepository.save(entity);
         // create empty collections for favorites, currently reading, finished, and read list
+        List<ErrorDto> saveCollectionErrors = new ArrayList<>();
         collectionService.saveAll(List.of(
                 new CreateCollectionDto(savedEntity.getId(), "Favorites", true),
                 new CreateCollectionDto(savedEntity.getId(), "Currently Reading", true),
                 new CreateCollectionDto(savedEntity.getId(), "Finished", true),
                 new CreateCollectionDto(savedEntity.getId(), "Read List", true)
-        ));
+        ), saveCollectionErrors);
+        if (!saveCollectionErrors.isEmpty()) {
+            errors.addAll(saveCollectionErrors);
+            return null;
+        }
         LOG.info("{}addUser() created user with ID={}", CLASS_LOG, entity.getId());
         return getUserById(savedEntity.getId());
     }

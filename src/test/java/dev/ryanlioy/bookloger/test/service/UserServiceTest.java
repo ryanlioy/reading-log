@@ -25,7 +25,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -95,15 +94,6 @@ public class UserServiceTest {
         assertNull(dto);
         assertEquals(1, errors.size());
         assertEquals(Errors.ROLE_DOES_NOT_EXIST, errors.getFirst().getMessage());
-    }
-
-    @Test
-    public void addUser_invalidRole_throwError() {
-        when(roleService.getRoleByName(any())).thenReturn(null);
-
-        UserDto userDto = new UserDto();
-        userDto.setRole(Role.ADMIN.name());
-        assertThrows(RuntimeException.class, () -> userService.addUser(userDto, new ArrayList<>()));
     }
 
     @Test

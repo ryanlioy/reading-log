@@ -1,9 +1,11 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
 import dev.ryanlioy.bookloger.dto.ModifyCollectionDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.CollectionEntity;
 import dev.ryanlioy.bookloger.mapper.CollectionMapper;
 import dev.ryanlioy.bookloger.repository.CollectionRepository;
@@ -66,24 +68,35 @@ public class CollectionService {
      * @param createCollectionDto the collection to create
      * @return the created collection
      */
-    public CollectionDto save(CreateCollectionDto createCollectionDto) {
+    public CollectionDto save(CreateCollectionDto createCollectionDto, List<ErrorDto> errors) {
         Long userId = createCollectionDto.getUserId();
         boolean userExists = userService.doesUserExist(userId);
         if (!userExists) {
             LOG.error("{}save(CreateCollectionDto) Attempted to save collection for user with ID={}, but no such user exists", CLASS_LOG, userId);
-            throw new RuntimeException(String.format("User with ID=%s does not exist",  userId));
+            errors.add(new ErrorDto(Errors.USER_DOES_NOT_EXIST));
+            return null;
         }
         List<BookDto> books = bookService.getAllBooksById(createCollectionDto.getBookIds());
+        // if books returned is smaller than the requested books than some don't exist
+        if (books.size() != createCollectionDto.getBookIds().size()) {
+            List<Long> missingIds = createCollectionDto.getBookIds();
+            // remove all ids that were returned by query
+            missingIds.removeAll(books.stream().map(BookDto::getId).toList());
+            LOG.error("{}save(CreateCollectionDto) Attempted to create collection but books with ID={} dp not exist", CLASS_LOG, missingIds);
+            errors.add(new ErrorDto(String.format(Errors.BOOKS_DO_NOT_EXIST, missingIds)));
+            return null;
+        }
         CollectionEntity entity = collectionRepository.save(collectionMapper.createDtoToEntity(createCollectionDto, books));
         LOG.info("{}save() Saved collection with ID={}", CLASS_LOG, entity.getId());
         return collectionMapper.entityToDto(entity);
     }
 
-    public List<CollectionDto> saveAll(List<CreateCollectionDto> createCollectionDtos) {
+    public List<CollectionDto> saveAll(List<CreateCollectionDto> createCollectionDtos, List<ErrorDto> errors) {
         Set<Long> userIds = createCollectionDtos.stream().map(CreateCollectionDto::getUserId).collect(Collectors.toSet());
         if (userIds.size() != 1) { // I think it makes sense to limit saving to only one user ID so we only need to check if one user exists
             LOG.error("{}saveAll() Attempted to save collections to multiple users with IDs={}", CLASS_LOG, userIds);
-            throw new RuntimeException(String.format("Trying to save collections to %s users",  userIds.size()));
+            errors.add(new ErrorDto(Errors.SAVE_COLLECTION_MULTIPLE_USERS));
+            return null;
         }
         Iterable<CollectionEntity> entities = collectionRepository.saveAll(createCollectionDtos.stream().map(dto ->
                 collectionMapper.createDtoToEntity(dto, bookService.getAllBooksById(dto.getBookIds()))).toList()
@@ -100,12 +113,13 @@ public class CollectionService {
      * @param dto the {@link CollectionDto} to create
      * @return the created collection
      */
-    public CollectionDto save(CollectionDto dto) {
+    public CollectionDto save(CollectionDto dto, List<ErrorDto> errors) {
         Long userId = dto.getUserId();
         boolean userExists = userService.doesUserExist(userId);
         if (!userExists) {
             LOG.error("{}save(CollectionDto) Attempted to save collections non existent user with ID={}", CLASS_LOG, userId);
-            throw new RuntimeException(String.format("User with ID=%s does not exist",  userId));
+            errors.add(new ErrorDto(Errors.USER_DOES_NOT_EXIST));
+            return null;
         }
         CollectionEntity entity = collectionRepository.save(collectionMapper.dtoToEntity(dto));
         LOG.info("{}save(CollectionDto) Saved collection with ID={}", CLASS_LOG, entity.getId());
@@ -130,21 +144,32 @@ public class CollectionService {
      * @param dto contains the book ID and collection ID
      * @return the collection with the newly added book
      */
-    public CollectionDto addBooksToCollection(ModifyCollectionDto dto) {
+    public CollectionDto addBooksToCollection(ModifyCollectionDto dto, List<ErrorDto> errors) {
         CollectionDto targetDto = findById(dto.getCollectionId());
-        if (targetDto == null) { // TODO more proper error handling
+        if (targetDto == null) {
             LOG.error("{}addBooksToCollection() Attempted to add books to collection with ID={} but no books were provided", CLASS_LOG, dto.getBookIds());
-            throw new RuntimeException(String.format("Collection with id %s not found", dto.getCollectionId()));
+            errors.add(new ErrorDto(Errors.COLLECTION_DOES_NOT_EXIST));
+            return null;
         }
         if (dto.getBookIds() == null || dto.getBookIds().isEmpty()) {
             LOG.error("{}addBooksToCollection() Attempted to add books to collection with ID={} but no collection found", CLASS_LOG, dto.getBookIds());
-            throw new RuntimeException("No books ids were given, nothing to add");
+            errors.add(new ErrorDto(Errors.ADD_BOOKS_COLLECTION_NO_BOOK_IDS));
+            return null;
         }
 
         List<BookDto> books = bookService.getAllBooksById(dto.getBookIds());
+        if (books.size() != dto.getBookIds().size()) {
+            List<Long> missingIds = dto.getBookIds();
+            // remove all ids that were returned by query
+            missingIds.removeAll(books.stream().map(BookDto::getId).toList());
+            LOG.error("{}addBooksToCollection() attempted to add books with IDs={} but books do not exist", CLASS_LOG, missingIds);
+            errors.add(new ErrorDto(String.format(Errors.BOOKS_DO_NOT_EXIST, missingIds)));
+            return null;
+        }
+
         List<BookDto> newBooks = Stream.concat(books.stream(), targetDto.getBooks().stream()).toList(); // because the repository returns an immutable list!
         targetDto.setBooks(newBooks);
-        CollectionDto newCollection = save(targetDto);
+        CollectionDto newCollection = save(targetDto, new ArrayList<>()); // TODO handle errors from here
         LOG.info("{}addBooksToCollection() Saved books with IDs={} to collection with ID={}", CLASS_LOG, dto.getBookIds(),  newCollection.getId());
         return newCollection;
     }
@@ -163,7 +188,7 @@ public class CollectionService {
         List<BookDto> newBooks = new ArrayList<>(books); // because the repository returns an immutable list!
         newBooks.removeAll(books);
         targetDto.setBooks(newBooks);
-        CollectionDto updatedCollection = save(targetDto);
+        CollectionDto updatedCollection = save(targetDto, new  ArrayList<>()); // TODO handle errors from here
         LOG.info("{}deleteBooksFromCollection() Deleted books with IDs={} from collection with ID={}", CLASS_LOG, dto.getBookIds(),  updatedCollection.getId());
         return updatedCollection;
     }
