@@ -1,11 +1,14 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.constants.Role;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.UserDto;
+import dev.ryanlioy.bookloger.entity.RoleEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
 import dev.ryanlioy.bookloger.repository.UserRepository;
 import dev.ryanlioy.bookloger.service.CollectionService;
+import dev.ryanlioy.bookloger.service.RoleService;
 import dev.ryanlioy.bookloger.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -37,11 +41,14 @@ public class UserServiceTest {
     @Mock
     private CollectionService collectionService;
 
+    @Mock
+    private RoleService roleService;
+
     private UserService userService;
 
     @BeforeEach
     public void setUp() {
-        userService = new UserService(userRepository, userMapper, collectionService);
+        userService = new UserService(userRepository, userMapper, collectionService, roleService);
     }
 
     @Test
@@ -67,10 +74,22 @@ public class UserServiceTest {
         UserEntity userEntity = new UserEntity();
         when(userRepository.save(any())).thenReturn(userEntity);
         UserDto userDto = new UserDto();
+        userDto.setRole(Role.USER);
         when(userMapper.entityToDto(any())).thenReturn(userDto);
+        when(userMapper.dtoToEntity(any(), any())).thenReturn(new UserEntity(1L));
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+        when(roleService.getRoleByName(any())).thenReturn(new RoleEntity(1L, "ADMIN"));
 
         assertEquals(userService.addUser(userDto), userDto);
+    }
+
+    @Test
+    public void addUser_invalidRole_throwError() {
+        when(roleService.getRoleByName(any())).thenReturn(null);
+
+        UserDto userDto = new UserDto();
+        userDto.setRole(Role.ADMIN);
+        assertThrows(RuntimeException.class, () -> userService.addUser(userDto));
     }
 
     @Test

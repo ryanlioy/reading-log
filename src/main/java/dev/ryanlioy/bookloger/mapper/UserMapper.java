@@ -1,9 +1,11 @@
 package dev.ryanlioy.bookloger.mapper;
 
+import dev.ryanlioy.bookloger.constants.Role;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
-import dev.ryanlioy.bookloger.entity.CollectionEntity;
-import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.dto.UserDto;
+import dev.ryanlioy.bookloger.entity.CollectionEntity;
+import dev.ryanlioy.bookloger.entity.RoleEntity;
+import dev.ryanlioy.bookloger.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public class UserMapper {
         this.collectionMapper = collectionMapper;
     }
 
-    public UserEntity dtoToEntity(UserDto user) {
+    public UserEntity dtoToEntity(UserDto user, RoleEntity role) {
         UserEntity entity = new UserEntity();
 
         entity.setId(user.getId());
@@ -29,6 +31,7 @@ public class UserMapper {
         if (user.getCollections() != null) {
             user.getCollections().values().forEach(dto -> collectionEntities.add(collectionMapper.dtoToEntity(dto)));
         }
+        entity.setRole(role);
         entity.setCollections(collectionEntities);
 
         return entity;
@@ -43,6 +46,7 @@ public class UserMapper {
         Map<String, CollectionDto> collections = new HashMap<>();
         entity.getCollections().forEach(e -> collections.put(e.getTitle(), collectionMapper.entityToDto(e)));
         dto.setCollections(collections);
+        dto.setRole(Role.valueOf(entity.getRole().getName()));
 
         return dto;
     }

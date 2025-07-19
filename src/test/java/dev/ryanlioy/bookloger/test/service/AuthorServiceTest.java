@@ -64,6 +64,7 @@ public class AuthorServiceTest {
         when(bookService.getAllBooksById(any())).thenReturn(books);
         AuthorDto expected = new AuthorDto(1L);
         when(authorMapper.entityToDto(any())).thenReturn(expected);
+        when(authorRepository.save(any())).thenReturn(new AuthorEntity(1L));
 
         AuthorDto actual = authorService.createAuthor(new CreateAuthorDto());
 
