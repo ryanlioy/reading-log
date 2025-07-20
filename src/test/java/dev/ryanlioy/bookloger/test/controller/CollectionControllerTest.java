@@ -37,7 +37,7 @@ public class CollectionControllerTest {
 
     @Test
     public void create_returnDtosAnd200() {
-        when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
+        when(collectionService.save(any(CreateCollectionDto.class), any())).thenReturn(new CollectionDto(1L));
         CreateCollectionDto dto = new CreateCollectionDto(1L);
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.create(dto);
 
@@ -65,7 +65,7 @@ public class CollectionControllerTest {
 
     @Test
     public void createCurrentlyReading_whenEntityExists_returnDtoAnd200() {
-        when(collectionService.save(any(CreateCollectionDto.class))).thenReturn(new CollectionDto(1L));
+        when(collectionService.save(any(CreateCollectionDto.class), any())).thenReturn(new CollectionDto(1L));
 
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.create(new CreateCollectionDto(1L));
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -91,7 +91,7 @@ public class CollectionControllerTest {
     @Test
     public void addBooksToCollection_addBooksToCollection_return200() {
         CollectionDto dto = new CollectionDto(1L);
-        when(collectionService.addBooksToCollection(any(ModifyCollectionDto.class))).thenReturn(dto);
+        when(collectionService.addBooksToCollection(any(ModifyCollectionDto.class), any())).thenReturn(dto);
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.addBooksToCollection(new ModifyCollectionDto());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dto, response.getBody().getContent());
@@ -100,7 +100,7 @@ public class CollectionControllerTest {
     @Test
     public void removeBooksFromCollection_removeBooksFromCollection_return200() {
         CollectionDto dto = new CollectionDto(1L);
-        when(collectionService.deleteBooksFromCollection(any())).thenReturn(dto);
+        when(collectionService.deleteBooksFromCollection(any(), any())).thenReturn(dto);
         ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.removeBooksFromCollection(new ModifyCollectionDto());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dto, response.getBody().getContent());
@@ -109,6 +109,6 @@ public class CollectionControllerTest {
     @Test
     public void deleteById() {
         collectionController.deleteById(1L);
-        verify(collectionService, times(1)).deleteById(any());
+        verify(collectionService, times(1)).deleteById(any(), any());
     }
 }

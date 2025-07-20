@@ -1,9 +1,11 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
 import dev.ryanlioy.bookloger.dto.ModifyCollectionDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.CollectionEntity;
 import dev.ryanlioy.bookloger.mapper.CollectionMapper;
 import dev.ryanlioy.bookloger.repository.CollectionRepository;
@@ -22,8 +24,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -75,14 +77,44 @@ public class CollectionServiceTest {
         when(collectionMapper.entityToDto(any())).thenReturn(expected);
         when(userService.doesUserExist(any())).thenReturn(true);
 
-        CollectionDto response = collectionService.save(new CreateCollectionDto());
+        CollectionDto response = collectionService.save(new CreateCollectionDto(), new ArrayList<>());
         assertEquals(expected, response);
     }
 
     @Test
-    public void saveCreateCollectionDto_throwException() {
+    public void saveCreateCollectionDto_userDoesNotExist_returnError() {
         when(userService.doesUserExist(any())).thenReturn(false);
-        assertThrows(RuntimeException.class, () -> collectionService.save(new CreateCollectionDto()));
+
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto dto = collectionService.save(new CreateCollectionDto(), errors);
+
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.USER_DOES_NOT_EXIST, errors.getFirst().getMessage());
+    }
+
+    @Test
+    public void saveCreateCollectionDto_bookDoesNotExist_returnError() {
+        when(userService.doesUserExist(any())).thenReturn(true);
+        when(bookService.getAllBooksById(any())).thenReturn(new ArrayList<>());
+
+        List<ErrorDto> errors = new ArrayList<>();
+        CreateCollectionDto createCollectionDto = new CreateCollectionDto();
+        createCollectionDto.setBookIds(new ArrayList<>(List.of(1L)));
+        CollectionDto dto = collectionService.save(createCollectionDto, errors);
+
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(String.format(Errors.BOOKS_DO_NOT_EXIST, "[1]"), errors.getFirst().getMessage());
+    }
+
+    @Test
+    public void saveCreateCollectionDto_multipleUsers_returnError() {
+        List<ErrorDto> errors = new ArrayList<>();
+        List<CollectionDto> dtos = collectionService.saveAll(List.of(new CreateCollectionDto(1L, "title", false), new CreateCollectionDto(2L, "title", false)), errors);
+        assertNull(dtos);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.SAVE_COLLECTION_MULTIPLE_USERS, errors.getFirst().getMessage());
     }
 
     @Test
@@ -92,8 +124,19 @@ public class CollectionServiceTest {
         when(collectionMapper.entityToDto(any())).thenReturn(expected);
         when(userService.doesUserExist(any())).thenReturn(true);
 
-        CollectionDto response = collectionService.save(new CollectionDto());
+        CollectionDto response = collectionService.save(new CollectionDto(), new ArrayList<>());
         assertEquals(expected, response);
+    }
+
+    @Test
+    public void saveCollectionDto_userDoesNotExist_returnError() {
+        when(userService.doesUserExist(any())).thenReturn(false);
+
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto dto = collectionService.save(new CollectionDto(), errors);
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.USER_DOES_NOT_EXIST, errors.getFirst().getMessage());
     }
 
     @Test
@@ -146,7 +189,7 @@ public class CollectionServiceTest {
 
         ModifyCollectionDto modifyCollectionDto = new ModifyCollectionDto();
         modifyCollectionDto.setBookIds(List.of(1L));
-        CollectionDto response = collectionService.addBooksToCollection(modifyCollectionDto);
+        CollectionDto response = collectionService.addBooksToCollection(modifyCollectionDto, new ArrayList<>());
 
         assertEquals(1, response.getBooks().size());
         assertEquals(response.getBooks().getFirst(), expectedBook);
@@ -155,15 +198,67 @@ public class CollectionServiceTest {
     @Test
     public void save_userDoesNotExist_throwException() {
         when(userService.doesUserExist(any())).thenReturn(false);
-        assertThrows(RuntimeException.class, () -> collectionService.save(new CollectionDto()));
+
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto dto = collectionService.save(new CollectionDto(), errors);
+
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.USER_DOES_NOT_EXIST, errors.getFirst().getMessage());
     }
 
-    @Test // TODO will need to change once returning errors
-    public void save_collectionDoesNotExist_throwException() {
+    @Test
+    public void addBooksToCollection() {
+        when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
+        when(bookService.getAllBooksById(any())).thenReturn(List.of(new BookDto()));
+        when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
+        when(userService.doesUserExist(any())).thenReturn(true);
+        CollectionDto collectionDto = new CollectionDto(1L);
+        collectionDto.setBooks(List.of(new BookDto()));
+        when(collectionMapper.entityToDto(any())).thenReturn(collectionDto);
+
+        List<ErrorDto> errors = new ArrayList<>();
+        ModifyCollectionDto modifyCollectionDto = new ModifyCollectionDto();
+        modifyCollectionDto.setBookIds(List.of(1L));
+        CollectionDto dto = collectionService.addBooksToCollection(modifyCollectionDto, errors);
+
+        assertEquals(0, errors.size());
+        assertNotNull(dto);
+        assertEquals(collectionDto, dto);
+    }
+
+    @Test
+    public void addBooksToCollection_collectionDoesNotExist_returnError() {
         when(collectionRepository.findById(any())).thenReturn(Optional.empty());
+
         ModifyCollectionDto dto = new ModifyCollectionDto();
         dto.setBookIds(List.of(1L));
-        assertThrows(RuntimeException.class, () -> collectionService.addBooksToCollection(dto));
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto collectionDto = collectionService.addBooksToCollection(dto, errors);
+
+        assertNull(collectionDto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.COLLECTION_DOES_NOT_EXIST, errors.get(0).getMessage());
+    }
+
+    @Test
+    public void addBooksToCollection_booksDoNotExist_returnError() {
+        when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
+        BookDto bookDto = new BookDto();
+        bookDto.setId(1L);
+        when(bookService.getAllBooksById(any())).thenReturn(new ArrayList<>(List.of(bookDto)));
+        CollectionDto collectionDto = new CollectionDto(1L);
+        collectionDto.setBooks(List.of(new BookDto()));
+        when(collectionMapper.entityToDto(any())).thenReturn(collectionDto);
+
+        ModifyCollectionDto dto = new ModifyCollectionDto();
+        dto.setBookIds(new ArrayList<>(List.of(1L, 2L)));
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto actual = collectionService.addBooksToCollection(dto, errors);
+
+        assertNull(actual);
+        assertEquals(1, errors.size());
+        assertEquals(String.format(Errors.BOOKS_DO_NOT_EXIST, "[2]"), errors.getFirst().getMessage());
     }
 
     @Test
@@ -177,24 +272,34 @@ public class CollectionServiceTest {
         when(userService.doesUserExist(any())).thenReturn(true);
         when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
 
-        CollectionDto actual = collectionService.deleteBooksFromCollection(new  ModifyCollectionDto(1L, List.of(1L)));
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto actual = collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, List.of(1L)), errors);
 
+        assertTrue(errors.isEmpty());
         assertTrue(actual.getBooks().isEmpty());
     }
 
     @Test
-    public void removeBooksFromCollection_whenNoBookIds_throwException() {
-        assertThrows(RuntimeException.class, () -> collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, new ArrayList<>())));
+    public void removeBooksFromCollection_whenNoBookIds_returnError() {
+        List<ErrorDto> errors = new ArrayList<>();
+
+        CollectionDto dto = collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, new ArrayList<>()), errors);
+
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.MISSING_BOOK_IDS, errors.getFirst().getMessage());
     }
 
     @Test
-    public void removeBooksFromCollection_noBookIds_throwException() {
-        assertThrows(RuntimeException.class, () -> collectionService.addBooksToCollection(new ModifyCollectionDto()));
-    }
+    public void removeBooksFromCollection_collectionDoesNotExist_returnError() {
+        when(collectionRepository.findById(any())).thenReturn(Optional.empty());
 
-    @Test
-    public void removeBooksFromCollection_collectionDoesNotExist_throwException() {
-        assertThrows(RuntimeException.class, () -> collectionService.addBooksToCollection(new ModifyCollectionDto(1L, new ArrayList<>())));
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto dto = collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, new ArrayList<>(List.of(1L))), errors);
+
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.COLLECTION_DOES_NOT_EXIST, errors.getFirst().getMessage());
     }
 
     @Test
@@ -211,20 +316,25 @@ public class CollectionServiceTest {
         dto.setIsDefaultCollection(false);
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
 
-        collectionService.deleteById(1L);
+        List<ErrorDto> errors = new ArrayList<>();
+        collectionService.deleteById(1L, errors);
 
+        assertThat(errors.isEmpty()).isTrue();
         verify(collectionRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    public void deleteById_defaultCollection_deleteEntity_throwException() { // TODO update when returning errors
+    public void deleteById_defaultCollection_deleteEntity_returnError() {
         when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
         CollectionDto dto = new CollectionDto();
         dto.setIsDefaultCollection(true);
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
 
-        assertThrows(RuntimeException.class, () -> collectionService.deleteById(1L));
+        List<ErrorDto> errors = new ArrayList<>();
+        collectionService.deleteById(1L, errors);
 
+        assertEquals(1, errors.size());
+        assertEquals(Errors.DELETE_DEFAULT_COLLECTION, errors.getFirst().getMessage());
         verify(collectionRepository, times(0)).deleteById(1L);
     }
 
@@ -236,7 +346,7 @@ public class CollectionServiceTest {
 
         CreateCollectionDto expected = new CreateCollectionDto(1L);
         expected.setId(1L);
-        List<CollectionDto> actual = collectionService.saveAll(List.of(expected));
+        List<CollectionDto> actual = collectionService.saveAll(List.of(expected), new ArrayList<>());
 
         assertEquals(expected.getId(), actual.getFirst().getId());
     }
@@ -247,9 +357,10 @@ public class CollectionServiceTest {
         dto1.setUserId(1L);
         CreateCollectionDto dto2 = new CreateCollectionDto();
         dto2.setUserId(2L);
-        assertThrows(RuntimeException.class, () -> collectionService.saveAll(List.of(
-                dto1,
-                dto2
-        )));
+        List<ErrorDto> errors = new ArrayList<>();
+        List<CollectionDto> dtos = collectionService.saveAll(List.of(dto1, dto2), errors);
+        assertNull(dtos);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.SAVE_COLLECTION_MULTIPLE_USERS, errors.getFirst().getMessage());
     }
 }

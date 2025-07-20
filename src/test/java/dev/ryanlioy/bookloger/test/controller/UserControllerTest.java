@@ -33,7 +33,7 @@ public class UserControllerTest {
     @Test
     public void addUser() {
         UserDto userDto = new UserDto();
-        when(userService.addUser(any())).thenReturn(userDto);
+        when(userService.addUser(any(), any())).thenReturn(userDto);
         ResponseEntity<EnvelopeDto<UserDto>> responseEntity = userController.addUser(userDto);
         Assertions.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         Assertions.assertEquals(userDto, responseEntity.getBody().getContent());

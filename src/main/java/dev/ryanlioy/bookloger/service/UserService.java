@@ -1,8 +1,10 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.CreateCollectionDto;
 import dev.ryanlioy.bookloger.dto.UserDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.RoleEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
@@ -11,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,22 +58,28 @@ public class UserService {
      * @param userDto the user to create
      * @return the created user
      */
-    public UserDto addUser(UserDto userDto) {
-        RoleEntity role = roleService.getRoleByName(userDto.getRole().name());
+    public UserDto addUser(UserDto userDto, List<ErrorDto> errors) {
+        RoleEntity role = roleService.getRoleByName(userDto.getRole());
         if (role == null) {
-            LOG.error("{}addUser() role with name={} found", CLASS_LOG, userDto.getRole().name());
-            throw new RuntimeException("Role not found");
+            LOG.error("{}addUser() role with name={} found", CLASS_LOG, userDto.getRole());
+            errors.add(new ErrorDto(Errors.ROLE_DOES_NOT_EXIST));
+            return null;
         }
         UserEntity entity = userMapper.dtoToEntity(userDto, role);
 
         UserEntity savedEntity = userRepository.save(entity);
         // create empty collections for favorites, currently reading, finished, and read list
+        List<ErrorDto> saveCollectionErrors = new ArrayList<>();
         collectionService.saveAll(List.of(
                 new CreateCollectionDto(savedEntity.getId(), "Favorites", true),
                 new CreateCollectionDto(savedEntity.getId(), "Currently Reading", true),
                 new CreateCollectionDto(savedEntity.getId(), "Finished", true),
                 new CreateCollectionDto(savedEntity.getId(), "Read List", true)
-        ));
+        ), saveCollectionErrors);
+        if (!saveCollectionErrors.isEmpty()) {
+            errors.addAll(saveCollectionErrors);
+            return null;
+        }
         LOG.info("{}addUser() created user with ID={}", CLASS_LOG, entity.getId());
         return getUserById(savedEntity.getId());
     }

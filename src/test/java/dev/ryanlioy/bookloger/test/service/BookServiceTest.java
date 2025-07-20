@@ -1,11 +1,13 @@
 package dev.ryanlioy.bookloger.test.service;
 
-import dev.ryanlioy.bookloger.service.AuthorService;
-import dev.ryanlioy.bookloger.service.BookService;
+import dev.ryanlioy.bookloger.constants.Errors;
+import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
-import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.service.AuthorService;
+import dev.ryanlioy.bookloger.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -73,15 +74,24 @@ public class BookServiceTest {
         BookDto bookDto = new BookDto();
         bookDto.setId(1L);
         when(bookMapper.entityToDto(any())).thenReturn(bookDto);
-        BookDto returnDto = bookService.createBook(new BookDto());
 
+        List<ErrorDto> errors = new ArrayList<>();
+        BookDto returnDto = bookService.createBook(new BookDto(), errors);
+
+        assertTrue(errors.isEmpty());
         assertNotNull(returnDto.getId());
     }
 
     @Test
-    public void createBook_whenAuthorDoesNotExist_throwError() {
+    public void createBook_whenAuthorDoesNotExist_returnError() {
         when(authorService.doesAuthorExist(any())).thenReturn(false);
-        assertThrows(RuntimeException.class, () -> bookService.createBook(new BookDto()));
+
+        List<ErrorDto> errors = new ArrayList<>();
+        BookDto dto = bookService.createBook(new BookDto(), errors);
+
+        assertNull(dto);
+        assertFalse(errors.isEmpty());
+        assertEquals(Errors.AUTHOR_DOES_NOT_EXIST, errors.getFirst().getMessage());
     }
 
     @Test

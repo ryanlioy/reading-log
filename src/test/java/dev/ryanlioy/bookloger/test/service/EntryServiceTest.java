@@ -1,16 +1,21 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.EntryDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.EntryEntity;
 import dev.ryanlioy.bookloger.mapper.EntryMapper;
 import dev.ryanlioy.bookloger.repository.EntryRepository;
+import dev.ryanlioy.bookloger.service.BookService;
 import dev.ryanlioy.bookloger.service.EntryService;
+import dev.ryanlioy.bookloger.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,22 +34,55 @@ public class EntryServiceTest {
     private EntryRepository entryRepository;
     @Mock
     private EntryMapper entryMapper;
+    @Mock
+    private BookService bookService;
+    @Mock
+    private UserService userService;
 
     private EntryService entryService;
 
     @BeforeEach
     public void setUp() {
-        entryService = new EntryService(entryRepository, entryMapper);
+        entryService = new EntryService(entryRepository, entryMapper, userService, bookService);
     }
 
     @Test
     public void createEntry_whenEntryCreated_returnDto() {
+        when(userService.doesUserExist(any())).thenReturn(true);
+        when(bookService.doesBookExist(any())).thenReturn(true);
         when(entryRepository.save(any())).thenReturn(new EntryEntity());
         EntryDto entryDto = new EntryDto(1L);
         when(entryMapper.entityToDto(any())).thenReturn(entryDto);
-        EntryDto dto = entryService.createEntry(entryDto);
+        List<ErrorDto> errors = new ArrayList<>();
+        EntryDto dto = entryService.createEntry(entryDto, errors);
 
+        assertTrue(errors.isEmpty());
         assertEquals(entryDto, dto);
+    }
+
+    @Test
+    public void createEntry_userDoesNotExist_returnError() {
+        when(userService.doesUserExist(any())).thenReturn(false);
+
+        List<ErrorDto> errors = new ArrayList<>();
+        EntryDto entry = entryService.createEntry(new EntryDto(1L), errors);
+
+        assertNull(entry);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.USER_DOES_NOT_EXIST, errors.getFirst().getMessage());
+    }
+
+    @Test
+    public void createEntry_bookDoesNotExist_returnError() {
+        when(userService.doesUserExist(any())).thenReturn(true);
+        when(bookService.doesBookExist(any())).thenReturn(false);
+
+        List<ErrorDto> errors = new ArrayList<>();
+        EntryDto entry = entryService.createEntry(new EntryDto(1L), errors);
+
+        assertNull(entry);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.BOOK_DOES_NOT_EXIST, errors.getFirst().getMessage());
     }
 
     @Test

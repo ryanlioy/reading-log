@@ -1,8 +1,10 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.AuthorDto;
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.CreateAuthorDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.AuthorEntity;
 import dev.ryanlioy.bookloger.mapper.AuthorMapper;
 import dev.ryanlioy.bookloger.repository.AuthorRepository;
@@ -14,11 +16,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -66,9 +72,25 @@ public class AuthorServiceTest {
         when(authorMapper.entityToDto(any())).thenReturn(expected);
         when(authorRepository.save(any())).thenReturn(new AuthorEntity(1L));
 
-        AuthorDto actual = authorService.createAuthor(new CreateAuthorDto());
+        List<ErrorDto> errors = new ArrayList<>();
+        AuthorDto actual = authorService.createAuthor(new CreateAuthorDto(), errors);
 
+        assertNotNull(actual);
+        assertTrue(errors.isEmpty());
         assertEquals(actual, expected);
+    }
+
+    @Test
+    public void createAuthor_authorAlreadyExists_returnError() {
+        when(authorRepository.findByName(any())).thenReturn(Optional.of(new AuthorEntity(1L)));
+        when(authorMapper.entityToDto(any())).thenReturn(new AuthorDto(1L));
+
+        List<ErrorDto> errors = new ArrayList<>();
+        AuthorDto actual = authorService.createAuthor(new CreateAuthorDto(), errors);
+
+        assertNull(actual);
+        assertFalse(errors.isEmpty());
+        assertEquals(Errors.AUTHOR_ALREADY_EXISTS, errors.getFirst().getMessage());
     }
 
     @Test
@@ -76,5 +98,24 @@ public class AuthorServiceTest {
         authorService.deleteAuthorById(1L);
 
         verify(authorRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    public void getAuthorByName_found() {
+        when(authorRepository.findByName(any())).thenReturn(Optional.of(new AuthorEntity()));
+        AuthorDto expected = new AuthorDto();
+        when(authorMapper.entityToDto(any())).thenReturn(expected);
+        AuthorDto actual = authorService.getAuthorByName("name");
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getAuthorByName_notFound() {
+        when(authorRepository.findByName(any())).thenReturn(Optional.empty());
+
+        AuthorDto actual = authorService.getAuthorByName("name");
+
+        assertNull(actual);
     }
 }

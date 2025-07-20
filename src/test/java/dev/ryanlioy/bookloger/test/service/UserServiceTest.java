@@ -1,8 +1,10 @@
 package dev.ryanlioy.bookloger.test.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.constants.Role;
 import dev.ryanlioy.bookloger.dto.CollectionDto;
 import dev.ryanlioy.bookloger.dto.UserDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.RoleEntity;
 import dev.ryanlioy.bookloger.entity.UserEntity;
 import dev.ryanlioy.bookloger.mapper.UserMapper;
@@ -16,13 +18,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -74,22 +76,24 @@ public class UserServiceTest {
         UserEntity userEntity = new UserEntity();
         when(userRepository.save(any())).thenReturn(userEntity);
         UserDto userDto = new UserDto();
-        userDto.setRole(Role.USER);
+        userDto.setRole(Role.USER.name());
         when(userMapper.entityToDto(any())).thenReturn(userDto);
         when(userMapper.dtoToEntity(any(), any())).thenReturn(new UserEntity(1L));
         when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
         when(roleService.getRoleByName(any())).thenReturn(new RoleEntity(1L, "ADMIN"));
 
-        assertEquals(userService.addUser(userDto), userDto);
+        assertEquals(userService.addUser(userDto, new ArrayList<>()), userDto);
     }
 
     @Test
-    public void addUser_invalidRole_throwError() {
+    public void addUser_invalidRole() {
         when(roleService.getRoleByName(any())).thenReturn(null);
+        List<ErrorDto> errors = new ArrayList<>();
+        UserDto dto = userService.addUser(new UserDto(), errors);
 
-        UserDto userDto = new UserDto();
-        userDto.setRole(Role.ADMIN);
-        assertThrows(RuntimeException.class, () -> userService.addUser(userDto));
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.ROLE_DOES_NOT_EXIST, errors.getFirst().getMessage());
     }
 
     @Test

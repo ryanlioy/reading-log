@@ -2,6 +2,7 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.dto.EntryDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.service.EntryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -32,7 +34,13 @@ public class EntryController {
      */
     @PostMapping
     public ResponseEntity<EnvelopeDto<EntryDto>> createEntry(@RequestBody EntryDto entryDto) {
-        return new ResponseEntity<>(new EnvelopeDto<>(entryService.createEntry(entryDto)), HttpStatus.CREATED);
+        List<ErrorDto> errors = new ArrayList<>();
+        EntryDto dto = entryService.createEntry(entryDto, errors);
+        ResponseEntity<EnvelopeDto<EntryDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.CREATED);
+        if (!errors.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 
     /**

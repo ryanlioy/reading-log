@@ -37,7 +37,7 @@ public class BookControllerTest {
     @Test
     public void addBook() {
         BookDto bookDto = new BookDto();
-        when(bookService.createBook(any())).thenReturn(bookDto);
+        when(bookService.createBook(any(), any())).thenReturn(bookDto);
         ResponseEntity<EnvelopeDto<BookDto>> response = bookController.addBook(bookDto);
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         Assertions.assertEquals(bookDto, response.getBody().getContent());
