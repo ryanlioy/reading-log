@@ -36,7 +36,7 @@ public class EntryController {
     public ResponseEntity<EnvelopeDto<EntryDto>> createEntry(@RequestBody EntryDto entryDto) {
         List<ErrorDto> errors = new ArrayList<>();
         EntryDto dto = entryService.createEntry(entryDto, errors);
-        ResponseEntity<EnvelopeDto<EntryDto>> response = new ResponseEntity<>(new EnvelopeDto<>(), HttpStatus.CREATED);
+        ResponseEntity<EnvelopeDto<EntryDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.CREATED);
         if (!errors.isEmpty()) {
             response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
         }
