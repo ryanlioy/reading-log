@@ -3,6 +3,7 @@ package dev.ryanlioy.bookloger.controller;
 import dev.ryanlioy.bookloger.dto.AuthorDto;
 import dev.ryanlioy.bookloger.dto.CreateAuthorDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.service.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -57,7 +59,13 @@ public class AuthorController {
      */
     @PostMapping
     public ResponseEntity<EnvelopeDto<AuthorDto>> createAuthor(@RequestBody CreateAuthorDto body) {
-        return new ResponseEntity<>(new EnvelopeDto<>(authorService.createAuthor(body)), HttpStatus.CREATED);
+        List<ErrorDto> errors = new ArrayList<>();
+        AuthorDto dto = authorService.createAuthor(body, errors);
+        ResponseEntity<EnvelopeDto<AuthorDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.CREATED);
+        if (!errors.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 
     /**

@@ -55,7 +55,7 @@ public class AuthorControllerTest {
     @Test
     public void createAuthor_returnsDto() {
         AuthorDto expected = new AuthorDto();
-        when(authorService.createAuthor(any())).thenReturn(expected);
+        when(authorService.createAuthor(any(), any())).thenReturn(expected);
 
         var response = authorController.createAuthor(new CreateAuthorDto());
         assertEquals(expected, response.getBody().getContent());

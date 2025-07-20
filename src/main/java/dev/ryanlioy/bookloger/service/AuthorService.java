@@ -1,8 +1,10 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.AuthorDto;
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.CreateAuthorDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.AuthorEntity;
 import dev.ryanlioy.bookloger.mapper.AuthorMapper;
 import dev.ryanlioy.bookloger.repository.AuthorRepository;
@@ -43,7 +45,14 @@ public class AuthorService {
      * @param createAuthorDto the author to create
      * @return the created author
      */
-    public AuthorDto createAuthor(CreateAuthorDto createAuthorDto) {
+    public AuthorDto createAuthor(CreateAuthorDto createAuthorDto, List<ErrorDto> errors) {
+        AuthorDto authorDto = getAuthorByName(createAuthorDto.getName());
+        if (authorDto != null) {
+            errors.add(new ErrorDto(Errors.AUTHOR_ALREADY_EXISTS));
+            LOG.error("{}createAuthor() Author with name {} already exists", CLASS_LOG, authorDto.getName());
+            return null;
+        }
+
         List<BookDto> books = bookService.getAllBooksById(createAuthorDto.getBookIds());
         AuthorEntity entity = authorRepository.save(authorMapper.createDtoToEntity(createAuthorDto, books));
         LOG.info("{}createAuthor() Author with ID={} created", CLASS_LOG, entity.getId());
@@ -74,5 +83,11 @@ public class AuthorService {
         Optional<AuthorEntity> author = authorRepository.findByName(name);
         LOG.info("{}doesAuthorExist() author with name {}" +  (author.isPresent() ? "exists" : "does not exist"), CLASS_LOG, author);
         return author.isPresent();
+    }
+
+    public AuthorDto getAuthorByName(String name) {
+        Optional<AuthorEntity> author = authorRepository.findByName(name);
+        LOG.info("{}getAuthorByName() Author with name {}",CLASS_LOG, author);
+        return author.map(authorMapper::entityToDto).orElse(null);
     }
 }

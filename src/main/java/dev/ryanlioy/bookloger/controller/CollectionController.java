@@ -72,8 +72,14 @@ public class CollectionController {
     }
 
     @PostMapping("/remove")
-    public ResponseEntity<EnvelopeDto<CollectionDto>> removeBooksFromCollection(@RequestBody ModifyCollectionDto dto) {
-        return new ResponseEntity<>(new EnvelopeDto<>(collectionService.deleteBooksFromCollection(dto)), HttpStatus.OK);
+    public ResponseEntity<EnvelopeDto<CollectionDto>> removeBooksFromCollection(@RequestBody ModifyCollectionDto modifiedCollectionDto) {
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto dto = collectionService.deleteBooksFromCollection(modifiedCollectionDto, errors);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.OK);
+        if (!errors.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 
     /**
@@ -91,8 +97,13 @@ public class CollectionController {
      * @return 204 with no body
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<EnvelopeDto<CollectionDto>> deleteById(@PathVariable Long id){
-        collectionService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<EnvelopeDto<CollectionDto>> deleteById(@PathVariable Long id) {
+        List<ErrorDto> errors = new ArrayList<>();
+        collectionService.deleteById(id, errors);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.OK);
+        if (!errors.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 }

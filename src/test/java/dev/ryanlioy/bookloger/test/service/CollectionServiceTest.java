@@ -26,7 +26,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -273,24 +272,34 @@ public class CollectionServiceTest {
         when(userService.doesUserExist(any())).thenReturn(true);
         when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
 
-        CollectionDto actual = collectionService.deleteBooksFromCollection(new  ModifyCollectionDto(1L, List.of(1L)));
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto actual = collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, List.of(1L)), errors);
 
+        assertTrue(errors.isEmpty());
         assertTrue(actual.getBooks().isEmpty());
     }
 
     @Test
-    public void removeBooksFromCollection_whenNoBookIds_throwException() {
-        assertThrows(RuntimeException.class, () -> collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, new ArrayList<>())));
+    public void removeBooksFromCollection_whenNoBookIds_returnError() {
+        List<ErrorDto> errors = new ArrayList<>();
+
+        CollectionDto dto = collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, new ArrayList<>()), errors);
+
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.MISSING_BOOK_IDS, errors.getFirst().getMessage());
     }
 
     @Test
-    public void removeBooksFromCollection_noBookIds_throwException() {
-        assertThrows(RuntimeException.class, () -> collectionService.deleteBooksFromCollection(new ModifyCollectionDto()));
-    }
+    public void removeBooksFromCollection_collectionDoesNotExist_returnError() {
+        when(collectionRepository.findById(any())).thenReturn(Optional.empty());
 
-    @Test
-    public void removeBooksFromCollection_collectionDoesNotExist_throwException() {
-        assertThrows(RuntimeException.class, () -> collectionService.deleteBooksFromCollection(new ModifyCollectionDto()));
+        List<ErrorDto> errors = new ArrayList<>();
+        CollectionDto dto = collectionService.deleteBooksFromCollection(new ModifyCollectionDto(1L, new ArrayList<>(List.of(1L))), errors);
+
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.COLLECTION_DOES_NOT_EXIST, errors.getFirst().getMessage());
     }
 
     @Test
@@ -307,20 +316,25 @@ public class CollectionServiceTest {
         dto.setIsDefaultCollection(false);
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
 
-        collectionService.deleteById(1L);
+        List<ErrorDto> errors = new ArrayList<>();
+        collectionService.deleteById(1L, errors);
 
+        assertThat(errors.isEmpty()).isTrue();
         verify(collectionRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    public void deleteById_defaultCollection_deleteEntity_throwException() { // TODO update when returning errors
+    public void deleteById_defaultCollection_deleteEntity_returnError() {
         when(collectionRepository.findById(any())).thenReturn(Optional.of(new CollectionEntity()));
         CollectionDto dto = new CollectionDto();
         dto.setIsDefaultCollection(true);
         when(collectionMapper.entityToDto(any())).thenReturn(dto);
 
-        assertThrows(RuntimeException.class, () -> collectionService.deleteById(1L));
+        List<ErrorDto> errors = new ArrayList<>();
+        collectionService.deleteById(1L, errors);
 
+        assertEquals(1, errors.size());
+        assertEquals(Errors.DELETE_DEFAULT_COLLECTION, errors.getFirst().getMessage());
         verify(collectionRepository, times(0)).deleteById(1L);
     }
 

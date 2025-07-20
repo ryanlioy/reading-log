@@ -174,21 +174,26 @@ public class CollectionService {
         return newCollection;
     }
 
-    public CollectionDto deleteBooksFromCollection(ModifyCollectionDto dto) {
+    public CollectionDto deleteBooksFromCollection(ModifyCollectionDto dto, List<ErrorDto> errors) {
         if (dto.getBookIds() == null || dto.getBookIds().isEmpty()) {
             LOG.error("{}deleteBooksFromCollection() Attempted to delete books to collection with ID={} but request has no IDs", CLASS_LOG, dto.getBookIds());
-            throw new RuntimeException("No books ids were given, nothing to delete");
+            errors.add(new ErrorDto(Errors.MISSING_BOOK_IDS));
+            return null;
         }
         CollectionDto targetDto = findById(dto.getCollectionId());
-        if (targetDto == null) { // TODO more proper error handling
+        if (targetDto == null) {
             LOG.error("{}deleteBooksFromCollection() Attempted to delete books from collection with ID={} but no collection found", CLASS_LOG, dto.getBookIds());
-            throw new RuntimeException(String.format("Collection with id %s not found", dto.getCollectionId()));
+            errors.add(new ErrorDto(Errors.COLLECTION_DOES_NOT_EXIST));
+            return null;
         }
         List<BookDto> books = bookService.getAllBooksById(dto.getBookIds());
         List<BookDto> newBooks = new ArrayList<>(books); // because the repository returns an immutable list!
         newBooks.removeAll(books);
         targetDto.setBooks(newBooks);
-        CollectionDto updatedCollection = save(targetDto, new  ArrayList<>()); // TODO handle errors from here
+        CollectionDto updatedCollection = save(targetDto, errors);
+        if (updatedCollection == null) { // error occurred
+            return null;
+        }
         LOG.info("{}deleteBooksFromCollection() Deleted books with IDs={} from collection with ID={}", CLASS_LOG, dto.getBookIds(),  updatedCollection.getId());
         return updatedCollection;
     }
@@ -206,11 +211,12 @@ public class CollectionService {
      * Delete a collection by ID
      * @param id the ID to delete
      */
-    public void deleteById(Long id) {
+    public void deleteById(Long id, List<ErrorDto> errors) {
         CollectionDto dto = findById(id);
-        if (dto.getIsDefaultCollection()) { // TODO proper error handling
+        if (dto.getIsDefaultCollection()) {
             LOG.info("{}deleteById() Cannot delete collection with ID={} because it is a default collection", CLASS_LOG, id);
-            throw new RuntimeException(String.format("Collection with id %s is a default collection and cannot be deleted", dto.getId()));
+            errors.add(new ErrorDto(Errors.DELETE_DEFAULT_COLLECTION));
+            return;
         }
         collectionRepository.deleteById(id);
         LOG.info("{}deleteById() Deleted collections with ID={}", CLASS_LOG, id);
