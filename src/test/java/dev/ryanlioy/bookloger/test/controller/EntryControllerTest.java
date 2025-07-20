@@ -34,7 +34,7 @@ public class EntryControllerTest {
     @Test
     public void createEntry_createsEntry() {
         EntryDto entryDto = new EntryDto();
-        when(entryService.createEntry(any())).thenReturn(entryDto);
+        when(entryService.createEntry(any(), any())).thenReturn(entryDto);
 
         var response = entryController.createEntry(entryDto);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);

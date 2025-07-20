@@ -108,6 +108,10 @@ public class BookService {
      * @return true if it exists, otherwise false
      */
     public boolean doesBookExistByTitle(String title) {
-        return bookRepository.doesBookExistByTitle(title);
+        return bookRepository.existByTitle(title);
+    }
+
+    public boolean doesBookExist(Long id) {
+        return bookRepository.existsById(id);
     }
 }

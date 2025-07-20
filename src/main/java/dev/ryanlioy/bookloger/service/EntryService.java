@@ -1,6 +1,8 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.EntryDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.EntryEntity;
 import dev.ryanlioy.bookloger.mapper.EntryMapper;
 import dev.ryanlioy.bookloger.repository.EntryRepository;
@@ -18,10 +20,14 @@ public class EntryService {
     private static final String CLASS_LOG = "EntryService::";
     private final EntryRepository entryRepository;
     private final EntryMapper entryMapper;
+    private final UserService userService;
+    private final BookService bookService;
 
-    public EntryService(EntryRepository entryRepository, EntryMapper entryMapper) {
+    public EntryService(EntryRepository entryRepository, EntryMapper entryMapper, UserService userService, BookService bookService) {
         this.entryRepository = entryRepository;
         this.entryMapper = entryMapper;
+        this.userService = userService;
+        this.bookService = bookService;
     }
 
     /**
@@ -29,7 +35,17 @@ public class EntryService {
      * @param entryDto the entry to create
      * @return the created enty
      */
-    public EntryDto createEntry(EntryDto entryDto) {
+    public EntryDto createEntry(EntryDto entryDto, List<ErrorDto> errors) {
+        if (!userService.doesUserExist(entryDto.getId())) {
+            errors.add(new ErrorDto(Errors.USER_DOES_NOT_EXIST));
+            LOG.error("{}createEntry() attempted to add entry for user with ID={} that does not exist", CLASS_LOG, entryDto.getId());
+            return null;
+        }
+        if (!bookService.doesBookExist(entryDto.getBookId())) {
+            errors.add(new ErrorDto(Errors.BOOK_DOES_NOT_EXIST));
+            LOG.error("{}createEntry() attempted to add entry for book with ID{} that does not exist", CLASS_LOG, entryDto.getBookId());
+            return null;
+        }
         EntryEntity entity = entryRepository.save(entryMapper.dtoToEntity(entryDto));
         LOG.info("{}createEntry() created entry with ID={}", CLASS_LOG, entryDto.getId());
         return entryMapper.entityToDto(entity);

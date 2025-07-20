@@ -12,4 +12,5 @@ public class Errors {
     public static final String AUTHOR_ALREADY_EXISTS = "Author with provided name already exists";
     public static final String AUTHOR_DOES_NOT_EXIST = "Author with provided name does not exist";
     public static final String BOOK_ALREADY_EXISTS = "Book with provided title already exists";
+    public static final String BOOK_DOES_NOT_EXIST = "Book does not exist";
 }
