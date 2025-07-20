@@ -2,6 +2,7 @@ package dev.ryanlioy.bookloger.controller;
 
 import dev.ryanlioy.bookloger.dto.BookDto;
 import dev.ryanlioy.bookloger.dto.meta.EnvelopeDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.service.BookService;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -32,7 +34,13 @@ public class BookController {
      */
     @PostMapping("/add")
     public ResponseEntity<EnvelopeDto<BookDto>> addBook(@RequestBody BookDto bookDto) {
-        return new ResponseEntity<>(new EnvelopeDto<>(bookService.createBook(bookDto)), HttpStatus.CREATED);
+        List<ErrorDto> errors = new ArrayList<>();
+        BookDto dto = bookService.createBook(bookDto, errors);
+        ResponseEntity<EnvelopeDto<BookDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.CREATED);
+        if (!errors.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 
     /**
@@ -47,7 +55,6 @@ public class BookController {
         if (book != null) {
             status = HttpStatus.OK;
         }
-
         return new ResponseEntity<>(new EnvelopeDto<>(book), status);
     }
 

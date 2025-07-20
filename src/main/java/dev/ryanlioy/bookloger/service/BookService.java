@@ -1,6 +1,8 @@
 package dev.ryanlioy.bookloger.service;
 
+import dev.ryanlioy.bookloger.constants.Errors;
 import dev.ryanlioy.bookloger.dto.BookDto;
+import dev.ryanlioy.bookloger.dto.meta.ErrorDto;
 import dev.ryanlioy.bookloger.entity.BookEntity;
 import dev.ryanlioy.bookloger.mapper.BookMapper;
 import dev.ryanlioy.bookloger.repository.BookRepository;
@@ -56,13 +58,20 @@ public class BookService {
      * @param bookDto the book to create
      * @return the created book
      */
-    public BookDto createBook(BookDto bookDto) {
+    public BookDto createBook(BookDto bookDto, List<ErrorDto> errors) {
         // check that author exists
         String authorName = bookDto.getAuthor();
         boolean authorExists = authorService.doesAuthorExist(authorName);
         if (!authorExists) {
+            errors.add(new ErrorDto(Errors.AUTHOR_DOES_NOT_EXIST));
             LOG.error("Attempted to add book with author {} but no author with that name was found", authorName);
-            throw new RuntimeException(String.format("No author with name %s exists", authorName));
+            return null;
+        }
+
+        if (doesBookExistByTitle(bookDto.getTitle())) {
+            errors.add(new ErrorDto(Errors.BOOK_ALREADY_EXISTS));
+            LOG.error("Attempted to add book with title {} but already exists", bookDto.getTitle());
+            return null;
         }
 
         BookEntity bookEntity = bookMapper.dtoToEntity(bookDto);
@@ -91,5 +100,14 @@ public class BookService {
     public void deleteBookById(Long id) {
         bookRepository.deleteById(id);
         LOG.info("{}deleteBookById() Deleted book with ID={}", CLASS_LOG, id);
+    }
+
+    /**
+     * Determines if a book exists based on title
+     * @param title title of the book
+     * @return true if it exists, otherwise false
+     */
+    public boolean doesBookExistByTitle(String title) {
+        return bookRepository.doesBookExistByTitle(title);
     }
 }

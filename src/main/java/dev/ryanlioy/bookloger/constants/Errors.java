@@ -10,4 +10,6 @@ public class Errors {
     public static final String BOOKS_DO_NOT_EXIST = "Books with IDs=%s do not exist";
     public static final String DELETE_DEFAULT_COLLECTION = "Cannot delete a default collection";
     public static final String AUTHOR_ALREADY_EXISTS = "Author with provided name already exists";
+    public static final String AUTHOR_DOES_NOT_EXIST = "Author with provided name does not exist";
+    public static final String BOOK_ALREADY_EXISTS = "Book with provided title already exists";
 }

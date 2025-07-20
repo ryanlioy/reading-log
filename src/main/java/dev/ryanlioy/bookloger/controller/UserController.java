@@ -39,7 +39,6 @@ public class UserController {
         if (!errors.isEmpty()) {
             response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
         }
-
         return response;
     }
 
