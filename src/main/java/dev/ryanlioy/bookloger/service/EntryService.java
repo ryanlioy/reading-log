@@ -36,7 +36,7 @@ public class EntryService {
      * @return the created enty
      */
     public EntryDto createEntry(EntryDto entryDto, List<ErrorDto> errors) {
-        if (!userService.doesUserExist(entryDto.getId())) {
+        if (!userService.doesUserExist(entryDto.getUserId())) {
             errors.add(new ErrorDto(Errors.USER_DOES_NOT_EXIST));
             LOG.error("{}createEntry() attempted to add entry for user with ID={} that does not exist", CLASS_LOG, entryDto.getId());
             return null;

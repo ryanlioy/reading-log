@@ -108,9 +108,14 @@ public class BookService {
      * @return true if it exists, otherwise false
      */
     public boolean doesBookExistByTitle(String title) {
-        return bookRepository.existByTitle(title);
+        return bookRepository.existsByTitle(title);
     }
 
+    /**
+     * Determines if a book exists by ID
+     * @param id ID of the book
+     * @return true if the book exists, otherwise false
+     */
     public boolean doesBookExist(Long id) {
         return bookRepository.existsById(id);
     }
