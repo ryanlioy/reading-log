@@ -2,6 +2,8 @@ package dev.ryanlioy.bookloger.dto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class EntryDto {
     public EntryDto() {}
@@ -19,4 +21,5 @@ public class EntryDto {
     Long userId;
     Long bookId;
     String description;
+    LocalDateTime creationDate;
 }

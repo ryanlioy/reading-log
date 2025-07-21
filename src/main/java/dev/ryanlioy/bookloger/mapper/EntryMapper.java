@@ -12,6 +12,7 @@ public class EntryMapper {
         entryEntity.setUserId(entryDto.getUserId());
         entryEntity.setDescription(entryDto.getDescription());
         entryEntity.setBookId(entryDto.getBookId());
+        entryEntity.setCreationDate(entryDto.getCreationDate());
 
         return entryEntity;
     }
@@ -22,6 +23,7 @@ public class EntryMapper {
         entryDto.setUserId(entryEntity.getUserId());
         entryDto.setBookId(entryEntity.getBookId());
         entryDto.setDescription(entryEntity.getDescription());
+        entryDto.setCreationDate(entryEntity.getCreationDate());
 
         return entryDto;
     }
