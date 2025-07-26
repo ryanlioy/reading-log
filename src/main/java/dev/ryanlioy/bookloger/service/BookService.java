@@ -117,6 +117,6 @@ public class BookService {
      * @return true if the book exists, otherwise false
      */
     public boolean doesBookExist(Long id) {
-        return bookRepository.existsById(id);
+        return id != null && bookRepository.existsById(id);
     }
 }
