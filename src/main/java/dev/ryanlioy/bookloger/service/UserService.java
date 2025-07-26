@@ -100,6 +100,6 @@ public class UserService {
      * @return true if the user exists, false otherwise
      */
     public boolean doesUserExist(Long id) {
-         return userRepository.existsById(id);
+         return id != null && userRepository.existsById(id);
     }
 }
