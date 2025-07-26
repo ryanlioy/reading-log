@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static dev.ryanlioy.bookloger.constants.Errors.ADD_SERIES_AUTHOR_DOES_NOT_EXIST;
 import static dev.ryanlioy.bookloger.constants.Errors.ADD_SERIES_NO_AUTHOR;
 import static dev.ryanlioy.bookloger.constants.Errors.ADD_SERIES_NO_TITLE;
 
@@ -55,7 +56,13 @@ public class SeriesService {
         }
         if (!authorService.doesAuthorExist(seriesDto.getAuthor())) {
             LOG.error("{}create() attempting to create series but author with name does not exist", CLASS_LOG);
+            errors.add(new ErrorDto(ADD_SERIES_AUTHOR_DOES_NOT_EXIST));
         }
+
+        if (!errors.isEmpty()) {
+            return null;
+        }
+
         List<BookDto> books = bookService.getAllBooksById(seriesDto.getBooks());
         AuthorDto author = authorService.getAuthorByName(seriesDto.getAuthor());
         SeriesEntity entity = seriesMapper.createDtoToEntity(seriesDto, books, author);
