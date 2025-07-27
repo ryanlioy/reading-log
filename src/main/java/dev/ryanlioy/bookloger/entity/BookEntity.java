@@ -29,7 +29,6 @@ public class BookEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long seriesId;
     private String title;
     private String author;
     private String publisher;

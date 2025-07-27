@@ -26,7 +26,6 @@ public class BookMapperTest {
         bookEntity.setTitle("title");
         bookEntity.setGenres(new ArrayList<>());
         bookEntity.setPublisher("publisher");
-        bookEntity.setSeriesId(0L);
         bookEntity.setPublishDate(LocalDate.of(1970, 1, 1));
 
         BookDto bookDto = bookMapper.entityToDto(bookEntity);
@@ -36,7 +35,6 @@ public class BookMapperTest {
         Assertions.assertEquals(bookDto.getTitle(), bookEntity.getTitle());
         Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres());
         Assertions.assertEquals(bookDto.getPublisher(), bookEntity.getPublisher());
-        Assertions.assertEquals(bookDto.getSeriesId(), bookEntity.getSeriesId());
         Assertions.assertEquals(bookDto.getPublishDate(), bookEntity.getPublishDate());
     }
 
@@ -48,7 +46,6 @@ public class BookMapperTest {
         bookDto.setTitle("title");
         bookDto.setGenres(new ArrayList<>());
         bookDto.setPublisher("publisher");
-        bookDto.setSeriesId(0L);
         bookDto.setPublishDate(LocalDate.of(1970, 1, 1));
 
         BookEntity bookEntity = bookMapper.dtoToEntity(bookDto);
@@ -57,7 +54,6 @@ public class BookMapperTest {
         Assertions.assertEquals(bookDto.getTitle(), bookEntity.getTitle());
         Assertions.assertEquals(bookDto.getGenres(), bookEntity.getGenres());
         Assertions.assertEquals(bookDto.getPublisher(), bookEntity.getPublisher());
-        Assertions.assertEquals(bookDto.getSeriesId(), bookEntity.getSeriesId());
         Assertions.assertEquals(bookDto.getPublishDate(), bookEntity.getPublishDate());
     }
 }
