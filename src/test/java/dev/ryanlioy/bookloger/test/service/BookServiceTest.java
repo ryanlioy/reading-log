@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static dev.ryanlioy.bookloger.constants.Errors.BOOK_ALREADY_EXISTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -59,8 +60,6 @@ public class BookServiceTest {
 
     @Test
     public void getBookById_whenNoBookIsFound_returnsNull() {
-        BookEntity bookEntity = new BookEntity();
-        bookEntity.setId(1L);
         when(bookRepository.findById((any()))).thenReturn(Optional.empty());
         BookDto book = bookService.getBookById(1L);
 
@@ -92,6 +91,17 @@ public class BookServiceTest {
         assertNull(dto);
         assertFalse(errors.isEmpty());
         assertEquals(Errors.AUTHOR_DOES_NOT_EXIST, errors.getFirst().getMessage());
+    }
+
+    @Test
+    public void createBook_titleAlreadyExists_returnError() {
+        when(authorService.doesAuthorExist(any())).thenReturn(true);
+        when(bookRepository.existsByTitle(any())).thenReturn(true);
+        List<ErrorDto> errors = new ArrayList<>();
+        BookDto dto = bookService.createBook(new BookDto(), errors);
+        assertNull(dto);
+        assertFalse(errors.isEmpty());
+        assertEquals(BOOK_ALREADY_EXISTS, errors.getFirst().getMessage());
     }
 
     @Test
@@ -131,8 +141,29 @@ public class BookServiceTest {
 
     @Test
     public void deleteBookById_deletesBook() {
-        bookRepository.deleteById(1L);
+        bookService.deleteBookById(1L);
 
         verify(bookRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    public void doesBookExist_bookExist_returnTrue() {
+        when(bookRepository.existsById(any())).thenReturn(true);
+
+        boolean actual = bookService.doesBookExist(1L);
+        assertTrue(actual);
+    }
+
+    @Test
+    public void doesBookExist_bookDoesNotExist_returnFalse() {
+        when(bookRepository.existsById(any())).thenReturn(false);
+        boolean actual = bookService.doesBookExist(1L);
+        assertFalse(actual);
+    }
+
+    @Test
+    public void doesBookExist_nullId_returnFalse() {
+        boolean actual = bookService.doesBookExist(null);
+        assertFalse(actual);
     }
 }
