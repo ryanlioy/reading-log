@@ -118,4 +118,36 @@ public class AuthorServiceTest {
 
         assertNull(actual);
     }
+
+    @Test
+    public void getAuthorsByBookId_found_returnDtos() {
+        when(authorRepository.findAllAuthorsByBookId(any())).thenReturn(List.of(new AuthorEntity(1L)));
+        when(authorMapper.entityToDto(any())).thenReturn(new AuthorDto(1L));
+        List<AuthorDto> actual = authorService.getAuthorsByBookId(1L);
+        assertEquals(1, actual.size());
+        assertEquals(1L, actual.getFirst().getId());
+    }
+
+    @Test
+    public void getAuthorsByBookId_notFound_returnEmptyList() {
+        when(authorRepository.findAllAuthorsByBookId(any())).thenReturn(List.of());
+        List<AuthorDto> actual = authorService.getAuthorsByBookId(1L);
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void doesAuthorExist_exists_returnTrue() {
+        when(authorRepository.findByName(any())).thenReturn(Optional.of(new AuthorEntity()));
+
+        boolean actual = authorService.doesAuthorExist("name");
+        assertTrue(actual);
+    }
+
+    @Test
+    public void doesAuthorExist_exists_returnFalse() {
+        when(authorRepository.findByName(any())).thenReturn(Optional.empty());
+
+        boolean actual = authorService.doesAuthorExist("name");
+        assertFalse(actual);
+    }
 }
