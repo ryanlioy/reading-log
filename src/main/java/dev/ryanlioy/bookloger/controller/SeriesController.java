@@ -32,7 +32,7 @@ public class SeriesController {
         SeriesDto dto = seriesService.findById(id);
         ResponseEntity<EnvelopeDto<SeriesDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.OK);
         if (dto == null) {
-            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return response;
     }

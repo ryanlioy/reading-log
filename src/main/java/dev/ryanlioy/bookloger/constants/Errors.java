@@ -24,7 +24,6 @@ public class Errors {
     public static final String AUTHOR_DOES_NOT_EXIST = "Author with provided name does not exist";
 
     // series
-    public static final String ADD_SERIES_WITH_ID = "Request to create series cannot include an ID";
     public static final String ADD_SERIES_NO_TITLE = "Series does not have a title";
     public static final String ADD_SERIES_NO_AUTHOR = "Series does not have an author";
     public static final String ADD_SERIES_AUTHOR_DOES_NOT_EXIST = "Series does not have an author";

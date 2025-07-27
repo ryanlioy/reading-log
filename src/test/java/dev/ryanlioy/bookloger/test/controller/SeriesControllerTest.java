@@ -45,7 +45,7 @@ public class SeriesControllerTest {
         when(seriesService.findById(any())).thenReturn(null);
         ResponseEntity<EnvelopeDto<SeriesDto>> response = seriesController.getById(1L);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertNull(response.getBody());
     }
 

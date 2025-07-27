@@ -4,8 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -22,6 +22,6 @@ public class SeriesEntity {
     private String description;
     @ManyToOne
     private AuthorEntity author;
-    @OneToMany
+    @ManyToMany
     private List<BookEntity> books;
 }
