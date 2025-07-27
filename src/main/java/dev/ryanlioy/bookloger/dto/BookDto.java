@@ -15,7 +15,6 @@ public class BookDto {
     }
     @Id
     Long id;
-    Long seriesId;
     String title;
     String author;
     String publisher;

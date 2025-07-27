@@ -10,7 +10,6 @@ public class BookMapper {
         BookEntity bookEntity = new BookEntity();
 
         bookEntity.setId(bookDto.getId());
-        bookEntity.setSeriesId(bookDto.getSeriesId());
         bookEntity.setTitle(bookDto.getTitle());
         bookEntity.setAuthor(bookDto.getAuthor());
         bookEntity.setPublishDate(bookDto.getPublishDate());
@@ -24,7 +23,6 @@ public class BookMapper {
         BookDto bookDto = new BookDto();
 
         bookDto.setId(bookEntity.getId());
-        bookDto.setSeriesId(bookEntity.getSeriesId());
         bookDto.setTitle(bookEntity.getTitle());
         bookDto.setAuthor(bookEntity.getAuthor());
         bookDto.setPublishDate(bookEntity.getPublishDate());
