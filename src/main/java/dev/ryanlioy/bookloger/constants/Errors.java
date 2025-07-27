@@ -22,4 +22,9 @@ public class Errors {
     // author
     public static final String AUTHOR_ALREADY_EXISTS = "Author with provided name already exists";
     public static final String AUTHOR_DOES_NOT_EXIST = "Author with provided name does not exist";
+
+    // series
+    public static final String ADD_SERIES_NO_TITLE = "Series does not have a title";
+    public static final String ADD_SERIES_NO_AUTHOR = "Series does not have an author";
+    public static final String ADD_SERIES_AUTHOR_DOES_NOT_EXIST = "Series does not have an author";
 }
