@@ -13,6 +13,18 @@ INSERT IGNORE INTO book (id, author, publish_date, publisher, title) VALUES (4, 
 INSERT IGNORE INTO book (id, author, publish_date, publisher, title) VALUES (5, 'Charles Dickens', STR_TO_DATE('1838-01-01', '%Y-%m-%d'), 'Richard Bentley', 'Oliver Twist'); -- no specific date for publishing so going with 1/1
 INSERT IGNORE INTO book (id, author, publish_date, publisher, title) VALUES (6, 'Charles Dickens', STR_TO_DATE('1853-01-01', '%Y-%m-%d'), 'Chapman & Hall', 'A Tale of Two Cities');
 
+-- genres
+INSERT IGNORE INTO genres (id, genre) VALUES (1, 'FANTASY');
+INSERT IGNORE INTO genres (id, genre) VALUES (1, 'FICTION');
+INSERT IGNORE INTO genres (id, genre) VALUES (2, 'FANTASY');
+INSERT IGNORE INTO genres (id, genre) VALUES (2, 'FICTION');
+INSERT IGNORE INTO genres (id, genre) VALUES (3, 'FANTASY');
+INSERT IGNORE INTO genres (id, genre) VALUES (3, 'FICTION');
+INSERT IGNORE INTO genres (id, genre) VALUES (4, 'FANTASY');
+INSERT IGNORE INTO genres (id, genre) VALUES (4, 'FICTION');
+INSERT IGNORE INTO genres (id, genre) VALUES (5, 'FICTION');
+INSERT IGNORE INTO genres (id, genre) VALUES (6, 'FICTION');
+
 -- users
 INSERT IGNORE INTO user (id, username) VALUES (1, 'user1');
 INSERT IGNORE INTO user (id, username) VALUES (2, 'user2');
@@ -52,3 +64,20 @@ INSERT IGNORE INTO collection_books (collection_entity_id, books_id) VALUES (7, 
 INSERT IGNORE INTO collection_books (collection_entity_id, books_id) VALUES (7, 1); -- user2 finished
 INSERT IGNORE INTO collection_books (collection_entity_id, books_id) VALUES (8, 5); -- user2 read list
 INSERT IGNORE INTO collection_books (collection_entity_id, books_id) VALUES (11, 3); -- user2 didn't finish
+
+-- entries
+INSERT IGNORE INTO entry (id, book_id, user_id, creation_date, description) VALUES (1, 1, 1, STR_TO_DATE('2025-07-01', '%Y-%m-%d'), 'Read first 3 chapters');
+INSERT IGNORE INTO entry (id, book_id, user_id, creation_date, description) VALUES (2, 1, 1, STR_TO_DATE('2025-07-02', '%Y-%m-%d'), '5 chapters left');
+INSERT IGNORE INTO entry (id, book_id, user_id, creation_date, description) VALUES (3, 1, 1, STR_TO_DATE('2025-07-03', '%Y-%m-%d'), 'Incredible!');
+INSERT IGNORE INTO entry (id, book_id, user_id, creation_date, description) VALUES (4, 2, 1, STR_TO_DATE('2025-07-03', '%Y-%m-%d'), '');
+
+INSERT IGNORE INTO entry (id, book_id, user_id, creation_date, description) VALUES (5, 5, 2, STR_TO_DATE('2025-07-06', '%Y-%m-%d'), '');
+INSERT IGNORE INTO entry (id, book_id, user_id, creation_date, description) VALUES (6, 5, 2, STR_TO_DATE('2025-07-07', '%Y-%m-%d'), '');
+
+-- series
+INSERT IGNORE INTO series (id, description, title, author_id) VALUES (1, '', 'Lord of the Rings', 1);
+
+-- series books
+INSERT IGNORE INTO series_books (series_entity_id, books_id) VALUES (1, 1);
+INSERT IGNORE INTO series_books (series_entity_id, books_id) VALUES (1, 2);
+INSERT IGNORE INTO series_books (series_entity_id, books_id) VALUES (1, 3);
