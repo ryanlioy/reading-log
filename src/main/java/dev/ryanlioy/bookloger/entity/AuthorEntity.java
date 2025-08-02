@@ -1,7 +1,7 @@
 package dev.ryanlioy.bookloger.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +24,6 @@ public class AuthorEntity {
     private Long id;
     private String name;
     private Integer age;
-    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<BookEntity> books;
 }
