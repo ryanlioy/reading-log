@@ -13,6 +13,14 @@ INSERT IGNORE INTO book (id, author, publish_date, publisher, title) VALUES (4, 
 INSERT IGNORE INTO book (id, author, publish_date, publisher, title) VALUES (5, 'Charles Dickens', STR_TO_DATE('1838-01-01', '%Y-%m-%d'), 'Richard Bentley', 'Oliver Twist'); -- no specific date for publishing so going with 1/1
 INSERT IGNORE INTO book (id, author, publish_date, publisher, title) VALUES (6, 'Charles Dickens', STR_TO_DATE('1853-01-01', '%Y-%m-%d'), 'Chapman & Hall', 'A Tale of Two Cities');
 
+-- author books
+INSERT IGNORE INTO author_books (author_entity_id, books_id) VALUES (1, 1);
+INSERT IGNORE INTO author_books (author_entity_id, books_id) VALUES (1, 2);
+INSERT IGNORE INTO author_books (author_entity_id, books_id) VALUES (1, 3);
+INSERT IGNORE INTO author_books (author_entity_id, books_id) VALUES (1, 4);
+INSERT IGNORE INTO author_books (author_entity_id, books_id) VALUES (2, 5);
+INSERT IGNORE INTO author_books (author_entity_id, books_id) VALUES (2, 6);
+
 -- genres
 INSERT IGNORE INTO genres (id, genre) VALUES (1, 'FANTASY');
 INSERT IGNORE INTO genres (id, genre) VALUES (1, 'FICTION');
