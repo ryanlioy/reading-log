@@ -1,0 +1,80 @@
+package dev.ryanlioy.booklogger.controller;
+
+import dev.ryanlioy.booklogger.dto.BookDto;
+import dev.ryanlioy.booklogger.meta.EnvelopeDto;
+import dev.ryanlioy.booklogger.meta.ErrorDto;
+import dev.ryanlioy.booklogger.entity.BookEntity;
+import dev.ryanlioy.booklogger.service.BookService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
+@RequestMapping("/book")
+public class BookController {
+    private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    /**
+     * Add a book
+     * @param bookDto book to add
+     * @return {@link ResponseEntity<BookEntity>}
+     */
+    @PostMapping("/add")
+    public ResponseEntity<EnvelopeDto<BookDto>> addBook(@RequestBody BookDto bookDto) {
+        List<ErrorDto> errors = new ArrayList<>();
+        BookDto dto = bookService.createBook(bookDto, errors);
+        ResponseEntity<EnvelopeDto<BookDto>> response = new ResponseEntity<>(new EnvelopeDto<>(dto), HttpStatus.CREATED);
+        if (!errors.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        }
+        return response;
+    }
+
+    /**
+     * Get a book by ID
+     * @param id the ID of the book to find
+     * @return a book and 200 if found, otherwise 404 and no response body
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<EnvelopeDto<BookDto>> getBook(@PathVariable Long id) {
+        BookDto book = bookService.getBookById(id);
+        HttpStatus status = HttpStatus.NO_CONTENT;
+        if (book != null) {
+            status = HttpStatus.OK;
+        }
+        return new ResponseEntity<>(new EnvelopeDto<>(book), status);
+    }
+
+    /**
+     * Get all books
+     * @return a {@link List} of all books
+     */
+    @GetMapping("/all")
+    public ResponseEntity<EnvelopeDto<List<BookDto>>> getAllBooks() {
+        return new ResponseEntity<>(new EnvelopeDto<>(bookService.getAllBooks()), HttpStatus.OK);
+    }
+
+    /**
+     * Delete a bok by ID
+     * @param id ID of book to delete
+     * @return 200 with no response body
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<EnvelopeDto<BookDto>> deleteBook(@PathVariable Long id) {
+        bookService.deleteBookById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}

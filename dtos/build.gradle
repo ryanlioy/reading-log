@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id("io.freefair.lombok") version "8.14"
+}
+
+group = 'dev.ryanlioy'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
+}
