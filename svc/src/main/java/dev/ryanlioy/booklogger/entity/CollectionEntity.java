@@ -1,0 +1,33 @@
+package dev.ryanlioy.booklogger.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+import java.util.List;
+
+@Entity
+@Data
+@Table(name = "collection")
+public class CollectionEntity {
+    public CollectionEntity() {}
+    public CollectionEntity(Long id) {
+        this.id = id;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private Long userId;
+    private String title;
+    private String description;
+    // default collections should not allow title and description changes
+    private Boolean isDefaultCollection; // TODO better name and actually enforce this
+    @ManyToMany(targetEntity = BookEntity.class, fetch = FetchType.EAGER)
+    private List<BookEntity> books;
+}
