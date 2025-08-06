@@ -22,7 +22,7 @@ public class UserEntity {
         this.id = id;
     }
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String username;
     @OneToMany(cascade = CascadeType.ALL)

@@ -28,7 +28,7 @@ public class EntryEntity {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     Long userId;
     Long bookId;
