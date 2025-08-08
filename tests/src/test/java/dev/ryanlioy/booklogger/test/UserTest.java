@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-public class User {
+public class UserTest {
 
     @BeforeAll
     static void beforeAll() {
@@ -93,5 +93,17 @@ public class User {
                 .get("/user/1000")
                 .then()
                 .statusCode(204);
+    }
+
+    @Test
+    public void testGetUser_exists() {
+        given()
+                .get("/user/2")
+                .then()
+                .statusCode(200)
+                .body("content.id", equalTo(2))
+                .body("content.username", equalTo("user2"))
+                .body("content.role", equalTo("USER"))
+                .body("content.collections", aMapWithSize(5));
     }
 }
