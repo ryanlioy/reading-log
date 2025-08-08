@@ -32,7 +32,7 @@ public class Book {
         book.setPublisher("Some Publisher");
         book.setPublishDate(LocalDate.of(2020, 1, 1));
 
-        int bookId = given()
+        var bookId = given()
                 .contentType(ContentType.JSON)
                 .body(book)
                 .when()
@@ -43,7 +43,7 @@ public class Book {
                 .body("content.title", equalTo(book.getTitle()))
                 .body("content.author", equalTo(book.getAuthor()))
                 .body("content.publisher", equalTo(book.getPublisher()))
-                .body("content.publishDate", equalTo(book.getPublishDate()))
+                .body("content.publishDate", equalTo(book.getPublishDate().toString()))
                 .extract().body().path("content.id");
 
         given()
@@ -54,11 +54,11 @@ public class Book {
                 .body("content.title", equalTo(book.getTitle()))
                 .body("content.author", equalTo(book.getAuthor()))
                 .body("content.publisher", equalTo(book.getPublisher()))
-                .body("content.publishDate", equalTo(book.getPublishDate()));
+                .body("content.publishDate", equalTo(book.getPublishDate().toString()));
 
         // delete user
         given()
-                .delete("/book/" + bookId)
+                .delete("/book/delete/" + bookId)
                 .then()
                 .statusCode(204);
     }
