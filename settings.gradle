@@ -2,3 +2,4 @@ rootProject.name = 'reading-log'
 
 include 'svc'
 include 'dtos'
+include 'tests'
