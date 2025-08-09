@@ -57,6 +57,50 @@ public class EntryTest {
     }
 
     @Test
+    public void createEntry_userDoesNotExist() {
+        EntryDto entry = new EntryDto();
+        entry.setBookId(1L);
+        entry.setUserId(100L);
+        LocalDateTime now = LocalDateTime.now();
+        entry.setCreationDate(now);
+        entry.setDescription("description");
+
+        // attempt to create
+        given()
+                .contentType(ContentType.JSON)
+                .body(entry)
+                .when()
+                .post("/entry")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo("User does not exist"));
+    }
+
+    @Test
+    public void createEntry_bookDoesNotExist() {
+        EntryDto entry = new EntryDto();
+        entry.setBookId(100L);
+        entry.setUserId(1L);
+        LocalDateTime now = LocalDateTime.now();
+        entry.setCreationDate(now);
+        entry.setDescription("description");
+
+        // attempt to create
+        given()
+                .contentType(ContentType.JSON)
+                .body(entry)
+                .when()
+                .post("/entry")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo("Book does not exist"));
+    }
+
+    @Test
     public void deleteEntry() {
         EntryDto entry = new EntryDto();
         entry.setBookId(1L);
