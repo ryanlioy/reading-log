@@ -51,7 +51,12 @@ public class EntryController {
      */
     @GetMapping
     public ResponseEntity<EnvelopeDto<List<EntryDto>>> getEntriesByUserIdAndBookId(@RequestParam Long userId, @RequestParam Long bookId) {
-        return new ResponseEntity<>(new EnvelopeDto<>(entryService.getEntryByBookIdAndUserId(bookId, userId)),  HttpStatus.OK);
+        ResponseEntity<EnvelopeDto<List<EntryDto>>> response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        List<EntryDto> dtos = entryService.getEntryByBookIdAndUserId(bookId, userId);
+        if (!dtos.isEmpty()) {
+            response = new ResponseEntity<>(new EnvelopeDto<>(dtos), HttpStatus.OK);
+        }
+        return response;
     }
 
     /**
