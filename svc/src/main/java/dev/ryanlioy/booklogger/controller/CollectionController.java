@@ -100,9 +100,24 @@ public class CollectionController {
     public ResponseEntity<EnvelopeDto<CollectionDto>> deleteById(@PathVariable Long id) {
         List<ErrorDto> errors = new ArrayList<>();
         collectionService.deleteById(id, errors);
-        ResponseEntity<EnvelopeDto<CollectionDto>> response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.OK);
-        if (!errors.isEmpty()) {
-            response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = new ResponseEntity<>(new EnvelopeDto<>(errors), HttpStatus.BAD_REQUEST);
+        if (errors.isEmpty()) {
+            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return response;
+    }
+
+    /**
+     * Get a collection entity
+     * @param id the ID of the collection to find
+     * @return 200 if found, 204 if not found
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<EnvelopeDto<CollectionDto>> getCollectionById(@PathVariable Long id) {
+        CollectionDto collection = collectionService.findById(id);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response =  new ResponseEntity<>(new EnvelopeDto<>(collection), HttpStatus.OK);
+        if (collection == null) {
+            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return response;
     }

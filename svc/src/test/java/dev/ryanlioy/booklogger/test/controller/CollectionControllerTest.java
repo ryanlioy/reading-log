@@ -111,4 +111,18 @@ public class CollectionControllerTest {
         collectionController.deleteById(1L);
         verify(collectionService, times(1)).deleteById(any(), any());
     }
+
+    @Test
+    public void getCollectionById_entityExists() {
+        when(collectionService.findById(1L)).thenReturn(new CollectionDto());
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.getCollectionById(1L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void getCollectionById_entityDoesNotExist() {
+        when(collectionService.findById(1L)).thenReturn(null);
+        ResponseEntity<EnvelopeDto<CollectionDto>> response = collectionController.getCollectionById(1L);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
 }
