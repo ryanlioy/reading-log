@@ -54,7 +54,7 @@ public class EntryControllerTest {
     public void getEntriesByUserIdAndBookId_whenEntitiesDontExist_returnEmptyResponse() {
         when(entryService.getEntryByBookIdAndUserId(any(), any())).thenReturn(List.of());
         var response = entryController.getEntriesByUserIdAndBookId(1L, 2L);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertTrue(response.getBody().getContent().isEmpty());
     }
 
