@@ -213,6 +213,9 @@ public class CollectionService {
      */
     public void deleteById(Long id, List<ErrorDto> errors) {
         CollectionDto dto = findById(id);
+        if (dto == null) { // nothing to delete
+            return;
+        }
         if (dto.getIsDefaultCollection()) {
             LOG.info("{}deleteById() Cannot delete collection with ID={} because it is a default collection", CLASS_LOG, id);
             errors.add(new ErrorDto(Errors.DELETE_DEFAULT_COLLECTION));
