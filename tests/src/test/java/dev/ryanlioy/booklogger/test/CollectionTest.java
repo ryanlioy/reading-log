@@ -1,5 +1,6 @@
 package dev.ryanlioy.booklogger.test;
 
+import dev.ryanlioy.booklogger.constants.Errors;
 import dev.ryanlioy.booklogger.dto.CreateCollectionDto;
 import dev.ryanlioy.booklogger.dto.ModifyCollectionDto;
 import io.restassured.http.ContentType;
@@ -257,6 +258,94 @@ public class CollectionTest {
     }
 
     @Test
+    public void updateCollection_addBook_collectionDoesNotExist() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(400L);
+        modifyCollection.setBookIds(List.of(1L));
+
+        // add book, should return error
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/add")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.COLLECTION_DOES_NOT_EXIST));
+    }
+
+    @Test
+    public void updateCollection_addBook_bookDoesNotExist() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(1L);
+        modifyCollection.setBookIds(List.of(400L));
+
+        // add book, should return error
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/add")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(String.format(Errors.BOOKS_DO_NOT_EXIST, "[400]")));
+    }
+
+    @Test
+    public void updateCollection_addBook_bookAlreadyExistsInCollection() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(1L);
+        modifyCollection.setBookIds(List.of(1L)); // book is already in the collection
+
+        // add book, should return error
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/add")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.BOOK_ALREADY_EXISTS_IN_COLLECTION));
+    }
+
+    @Test
+    public void updateCollection_addBook_noBooksProvided() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(1L);
+
+        // null list
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/add")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.ADD_BOOKS_COLLECTION_NO_BOOK_IDS));
+
+        // empty list
+        modifyCollection.setBookIds(new ArrayList<>());
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/add")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.ADD_BOOKS_COLLECTION_NO_BOOK_IDS));
+    }
+
+    @Test
     public void updateCollection_removeBook() {
         CreateCollectionDto createCollection =  new CreateCollectionDto();
         createCollection.setIsDefaultCollection(false);
@@ -303,5 +392,54 @@ public class CollectionTest {
                 .delete("/collection/{collectionId}", collectionId)
                 .then()
                 .statusCode(204);
+    }
+
+    @Test
+    public void updateCollection_removeBook_noBooksProvided() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(1L);
+
+        // null bookIds
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/remove")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.MISSING_BOOK_IDS));
+
+        // empty bookIds
+        modifyCollection.setBookIds(new ArrayList<>());
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/remove")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.MISSING_BOOK_IDS));
+    }
+
+    @Test
+    public void updateCollection_removeBook_collectionDoesNotExist() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(400L);
+        modifyCollection.setBookIds(List.of(1L));
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/remove")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.COLLECTION_DOES_NOT_EXIST));
     }
 }

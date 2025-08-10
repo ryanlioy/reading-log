@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -55,7 +56,7 @@ public class EntryControllerTest {
         when(entryService.getEntryByBookIdAndUserId(any(), any())).thenReturn(List.of());
         var response = entryController.getEntriesByUserIdAndBookId(1L, 2L);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertTrue(response.getBody().getContent().isEmpty());
+        assertNull(response.getBody());
     }
 
     @Test
