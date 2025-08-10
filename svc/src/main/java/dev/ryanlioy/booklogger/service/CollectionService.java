@@ -147,13 +147,19 @@ public class CollectionService {
     public CollectionDto addBooksToCollection(ModifyCollectionDto dto, List<ErrorDto> errors) {
         CollectionDto targetDto = findById(dto.getCollectionId());
         if (targetDto == null) {
-            LOG.error("{}addBooksToCollection() Attempted to add books to collection with ID={} but no books were provided", CLASS_LOG, dto.getBookIds());
+            LOG.error("{}addBooksToCollection() Attempted to add books to collection with ID={} but no collection found", CLASS_LOG, dto.getBookIds());
             errors.add(new ErrorDto(Errors.COLLECTION_DOES_NOT_EXIST));
             return null;
         }
         if (dto.getBookIds() == null || dto.getBookIds().isEmpty()) {
-            LOG.error("{}addBooksToCollection() Attempted to add books to collection with ID={} but no collection found", CLASS_LOG, dto.getBookIds());
+            LOG.error("{}addBooksToCollection() Attempted to add books to collection with ID={} but no books were provided", CLASS_LOG, dto.getBookIds());
             errors.add(new ErrorDto(Errors.ADD_BOOKS_COLLECTION_NO_BOOK_IDS));
+            return null;
+        }
+        // if any of the book IDs from request exist in the collection then return an error
+        if (targetDto.getBooks().stream().anyMatch(book -> dto.getBookIds().contains(book.getId()))) {
+            LOG.error("{}addBooksToCollection() Attempted to add books to collection with ID={} but a book is already in the collection", CLASS_LOG, dto.getBookIds());
+            errors.add(new ErrorDto(Errors.BOOK_ALREADY_EXISTS_IN_COLLECTION));
             return null;
         }
 

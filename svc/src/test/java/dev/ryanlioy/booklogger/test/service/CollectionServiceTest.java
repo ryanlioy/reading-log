@@ -214,11 +214,12 @@ public class CollectionServiceTest {
         when(collectionRepository.save(any())).thenReturn(new CollectionEntity());
         when(userService.doesUserExist(any())).thenReturn(true);
         CollectionDto collectionDto = new CollectionDto(1L);
-        collectionDto.setBooks(List.of(new BookDto()));
+        collectionDto.setBooks(List.of(new BookDto(2L)));
         when(collectionMapper.entityToDto(any())).thenReturn(collectionDto);
 
         List<ErrorDto> errors = new ArrayList<>();
         ModifyCollectionDto modifyCollectionDto = new ModifyCollectionDto();
+        modifyCollectionDto.setCollectionId(1L);
         modifyCollectionDto.setBookIds(List.of(1L));
         CollectionDto dto = collectionService.addBooksToCollection(modifyCollectionDto, errors);
 
