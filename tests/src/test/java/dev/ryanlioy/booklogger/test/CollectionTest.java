@@ -393,4 +393,53 @@ public class CollectionTest {
                 .then()
                 .statusCode(204);
     }
+
+    @Test
+    public void updateCollection_removeBook_noBooksProvided() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(1L);
+
+        // null bookIds
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/remove")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.MISSING_BOOK_IDS));
+
+        // empty bookIds
+        modifyCollection.setBookIds(new ArrayList<>());
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/remove")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.MISSING_BOOK_IDS));
+    }
+
+    @Test
+    public void updateCollection_removeBook_collectionDoesNotExist() {
+        ModifyCollectionDto modifyCollection = new  ModifyCollectionDto();
+        modifyCollection.setCollectionId(400L);
+        modifyCollection.setBookIds(List.of(1L));
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(modifyCollection)
+                .when()
+                .post("/collection/remove")
+                .then()
+                .statusCode(400)
+                .body("content", nullValue())
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.COLLECTION_DOES_NOT_EXIST));
+    }
 }
