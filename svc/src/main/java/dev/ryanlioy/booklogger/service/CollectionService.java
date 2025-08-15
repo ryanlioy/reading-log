@@ -9,6 +9,7 @@ import dev.ryanlioy.booklogger.meta.ErrorDto;
 import dev.ryanlioy.booklogger.entity.CollectionEntity;
 import dev.ryanlioy.booklogger.mapper.CollectionMapper;
 import dev.ryanlioy.booklogger.repository.CollectionRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -74,6 +75,11 @@ public class CollectionService {
         if (!userExists) {
             LOG.error("{}save(CreateCollectionDto) Attempted to save collection for user with ID={}, but no such user exists", CLASS_LOG, userId);
             errors.add(new ErrorDto(Errors.USER_DOES_NOT_EXIST));
+            return null;
+        }
+        if (StringUtils.isBlank(createCollectionDto.getTitle())) {
+            LOG.error("{}save(CreateCollectionDto) Attempted to save collection but no title was provided", CLASS_LOG);
+            errors.add(new ErrorDto(Errors.COLLECTION_MISSING_TITLE));
             return null;
         }
         List<BookDto> books = bookService.getAllBooksById(createCollectionDto.getBookIds());
