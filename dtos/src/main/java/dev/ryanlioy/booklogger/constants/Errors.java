@@ -19,6 +19,7 @@ public class Errors {
     public static final String MISSING_BOOK_IDS = "Cannot save books to collection as no books were provided";
     public static final String COLLECTION_DOES_NOT_EXIST = "Collection does not exist";
     public static final String BOOK_ALREADY_EXISTS_IN_COLLECTION = "Cannot add a book to a collection that is already in the collection";
+    public static final String COLLECTION_MISSING_TITLE = "Collection must have a title";
 
     // author
     public static final String AUTHOR_ALREADY_EXISTS = "Author with provided name already exists";

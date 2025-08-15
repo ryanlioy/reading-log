@@ -138,7 +138,7 @@ public class CollectionTest {
                 .then()
                 .statusCode(400)
                 .body("errors", hasSize(1))
-                .body("errors[0].message", equalTo("User does not exist"));
+                .body("errors[0].message", equalTo(Errors.USER_DOES_NOT_EXIST));
     }
 
     @Test
@@ -161,6 +161,28 @@ public class CollectionTest {
                 .statusCode(400)
                 .body("errors", hasSize(1))
                 .body("errors[0].message", equalTo(String.format("Books with IDs=[%s] do not exist", bookId)));
+    }
+
+    @Test
+    public void createCollection_noTitle() {
+        long bookId = 1;
+        CreateCollectionDto createCollection = new CreateCollectionDto();
+        createCollection.setIsDefaultCollection(false);
+        createCollection.setTitle(null);
+        createCollection.setDescription("description");
+        createCollection.setUserId(1L);
+        createCollection.setBookIds(List.of(bookId));
+
+        // create collection
+        given()
+                .contentType(ContentType.JSON)
+                .body(createCollection)
+                .when()
+                .post("collection")
+                .then()
+                .statusCode(400)
+                .body("errors", hasSize(1))
+                .body("errors[0].message", equalTo(Errors.COLLECTION_MISSING_TITLE));
     }
 
     @Test

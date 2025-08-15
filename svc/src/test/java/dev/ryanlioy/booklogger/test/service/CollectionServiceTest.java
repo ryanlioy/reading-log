@@ -196,7 +196,7 @@ public class CollectionServiceTest {
     }
 
     @Test
-    public void save_userDoesNotExist_throwException() {
+    public void save_userDoesNotExist_returnError() {
         when(userService.doesUserExist(any())).thenReturn(false);
 
         List<ErrorDto> errors = new ArrayList<>();
@@ -205,6 +205,20 @@ public class CollectionServiceTest {
         assertNull(dto);
         assertEquals(1, errors.size());
         assertEquals(Errors.USER_DOES_NOT_EXIST, errors.getFirst().getMessage());
+    }
+
+    @Test
+    public void save_noTitle_returnError() {
+        when(userService.doesUserExist(any())).thenReturn(true);
+        List<ErrorDto> errors = new ArrayList<>();
+
+        CreateCollectionDto request = new CreateCollectionDto();
+        request.setTitle(null);
+
+        CollectionDto dto = collectionService.save(request, errors);
+        assertNull(dto);
+        assertEquals(1, errors.size());
+        assertEquals(Errors.COLLECTION_MISSING_TITLE, errors.getFirst().getMessage());
     }
 
     @Test

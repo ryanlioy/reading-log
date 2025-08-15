@@ -25,6 +25,7 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:mysql'
     implementation project(':dtos')
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 test {
